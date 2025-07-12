@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "alias": ["twbus.vercel.app"],
   "builds": [
     {
       "src": "**",

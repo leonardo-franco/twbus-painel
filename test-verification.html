@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de Testes Automáticos - Painel de Ônibus</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .status-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4ade80;
+        }
+        
+        .test-result {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .test-success {
+            background: rgba(34, 197, 94, 0.2);
+            border-left: 3px solid #22c55e;
+        }
+        
+        .test-error {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 3px solid #ef4444;
+        }
+        
+        .test-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            background: rgba(79, 70, 229, 0.8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: rgba(79, 70, 229, 1);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚌 Verificação de Testes Automáticos</h1>
+        
+        <div class="status-card">
+            <h2>📋 Status dos Componentes</h2>
+            <div id="component-status">
+                <div class="test-result test-info">🔄 Verificando componentes...</div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <h2>🧪 Resultados dos Testes</h2>
+            <div>
+                <button class="btn" onclick="runManualTests()">🚀 Executar Testes Manualmente</button>
+                <button class="btn" onclick="clearResults()">🗑️ Limpar Resultados</button>
+                <button class="btn" onclick="exportResults()">💾 Exportar Resultados</button>
+            </div>
+            <div id="test-results">
+                <div class="test-result test-info">⏳ Aguardando execução dos testes automáticos...</div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <h2>🖥️ Console Output</h2>
+            <div id="console-output" class="console-output">
+                Console inicializando...<br>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necessários -->
+    <script src="security-config.js"></script>
+    <script src="script.js"></script>
+    <script src="tests.js"></script>
+    
+    <script>
+        // =====================================================
+        // VERIFICAÇÃO AUTOMÁTICA DE TESTES
+        // =====================================================
+        
+        let testResults = [];
+        let componentStatus = {};
+        
+        function updateComponentStatus(component, status, message) {
+            componentStatus[component] = { status, message };
+            renderComponentStatus();
+        }
+        
+        function renderComponentStatus() {
+            const container = document.getElementById('component-status');
+            container.innerHTML = '';
+            
+            Object.entries(componentStatus).forEach(([component, info]) => {
+                const item = document.createElement('div');
+                item.className = `test-result test-${info.status}`;
+                item.textContent = component + ': ' + info.message;
+                container.appendChild(item);
+            });
+        }
+        
+        function addTestResult(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({ timestamp, message, type });
+            
+            const container = document.getElementById('test-results');
+            const item = document.createElement('div');
+            item.className = `test-result test-${type}`;
+            item.textContent = '[' + timestamp + '] ' + message;
+            container.appendChild(item);
+            
+            // Limitar a 50 resultados
+            if (container.children.length > 50) {
+                container.removeChild(container.firstChild);
+            }
+            
+            // Auto-scroll para o final
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function addConsoleOutput(message) {
+            const container = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            container.innerHTML += '<span style="color: #666;">[' + timestamp + ']</span> ' + message + '<br>';
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Interceptar console.log
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            const message = args.join(' ');
+            addConsoleOutput('<span style="color: #00ff00;">[LOG]</span> ' + message);
+            
+            // Interpretar mensagens de teste
+            if (message.includes('✅')) {
+                addTestResult(message, 'success');
+            } else if (message.includes('❌')) {
+                addTestResult(message, 'error');
+            } else if (message.includes('🔄')) {
+                addTestResult(message, 'info');
+            }
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            const message = args.join(' ');
+            addConsoleOutput('<span style="color: #ff4444;">[ERROR]</span> ' + message);
+            addTestResult('❌ ERRO: ' + message, 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalConsoleWarn.apply(console, args);
+            const message = args.join(' ');
+            addConsoleOutput('<span style="color: #ffaa00;">[WARN]</span> ' + message);
+            addTestResult('⚠️ AVISO: ' + message, 'info');
+        };
+        
+        function runManualTests() {
+            addTestResult('🚀 Iniciando testes manuais...', 'info');
+            
+            if (typeof BusPanelTester !== 'undefined') {
+                try {
+                    const tester = new BusPanelTester();
+                    tester.registerAllTests();
+                    
+                    tester.runAllTests().then(() => {
+                        addTestResult('✅ Todos os testes manuais concluídos', 'success');
+                    }).catch((error) => {
+                        addTestResult('❌ Erro nos testes manuais: ' + error.message, 'error');
+                    });
+                } catch (error) {
+                    addTestResult('❌ Erro ao executar testes: ' + error.message, 'error');
+                }
+            } else {
+                addTestResult('❌ BusPanelTester não disponível', 'error');
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = 
+                '<div class="test-result test-info">📋 Resultados limpos</div>';
+            document.getElementById('console-output').innerHTML = 
+                'Console limpo...<br>';
+            testResults = [];
+        }
+        
+        function exportResults() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                componentStatus: componentStatus,
+                testResults: testResults
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], 
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'test-results-' + Date.now() + '.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            addTestResult('💾 Resultados exportados', 'success');
+        }
+        
+        // Verificação automática dos componentes
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Iniciando verificação automática...');
+            
+            setTimeout(() => {
+                // Verificar SecurityValidator
+                if (typeof SecurityValidator !== 'undefined') {
+                    updateComponentStatus('SecurityValidator', 'success', '✅ Disponível');
+                    
+                    try {
+                        const security = new SecurityValidator();
+                        const testInput = '&lt;script&gt;alert("test")&lt;/script&gt;';
+                        const sanitized = security.sanitizeInput(testInput);
+                        
+                        if (!sanitized.includes('&lt;script&gt;')) {
+                            updateComponentStatus('Sanitização XSS', 'success', '✅ Funcionando');
+                        } else {
+                            updateComponentStatus('Sanitização XSS', 'error', '❌ Falha');
+                        }
+                    } catch (error) {
+                        updateComponentStatus('Sanitização XSS', 'error', '❌ Erro: ' + error.message);
+                    }
+                } else {
+                    updateComponentStatus('SecurityValidator', 'error', '❌ Não disponível');
+                }
+                
+                // Verificar BusPanelTester
+                if (typeof BusPanelTester !== 'undefined') {
+                    updateComponentStatus('BusPanelTester', 'success', '✅ Disponível');
+                    
+                    try {
+                        const tester = new BusPanelTester();
+                        tester.registerAllTests();
+                        updateComponentStatus('Registro de Testes', 'success', '✅ Completo');
+                        
+                        // Executar testes automaticamente
+                        setTimeout(() => {
+                            console.log('🔄 Executando testes automaticamente...');
+                            runManualTests();
+                        }, 1000);
+                        
+                    } catch (error) {
+                        updateComponentStatus('Registro de Testes', 'error', '❌ Erro: ' + error.message);
+                    }
+                } else {
+                    updateComponentStatus('BusPanelTester', 'error', '❌ Não disponível');
+                }
+                
+                // Verificar SECURITY_CONFIG
+                if (typeof SECURITY_CONFIG !== 'undefined') {
+                    updateComponentStatus('SECURITY_CONFIG', 'success', 
+                        '✅ Disponível (' + Object.keys(SECURITY_CONFIG).length + ' configurações)');
+                } else {
+                    updateComponentStatus('SECURITY_CONFIG', 'error', '❌ Não disponível');
+                }
+                
+            }, 500);
+        });
+        
+        console.log('📋 Página de verificação de testes carregada');
+    </script>
+</body>
+</html>

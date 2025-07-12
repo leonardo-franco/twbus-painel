@@ -211,15 +211,60 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="tests.js"></script>
     <script>
-        // Inicialização do painel
-        try {
-            window.busPanel = new BusPanel();
-            console.log('✅ Painel TwBus inicializado com sucesso');
-        } catch (error) {
-            console.error('❌ Erro ao inicializar painel:', error);
-            document.body.classList.add('error-state');
-        }
+        // Inicialização do painel e testes automáticos
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Inicializar painel principal
+                window.busPanel = new BusPanel();
+                console.log('✅ Painel TwBus inicializado com sucesso');
+                
+                // Executar testes de segurança automaticamente
+                console.log('\n🔒 Iniciando testes de segurança automáticos...');
+                const tester = new BusPanelTester();
+                
+                // Registrar todos os testes
+                tester.registerAllTests();
+                
+                // Executar testes
+                const testsPassed = await tester.runAllTests();
+                
+                // Mostrar resultado visual
+                if (testsPassed) {
+                    console.log('\n🎉 Todos os testes de segurança passaram!');
+                    document.body.classList.add('tests-passed');
+                    
+                    // Adicionar indicador visual de sucesso
+                    const successIndicator = document.createElement('div');
+                    successIndicator.className = 'test-success-indicator';
+                    successIndicator.innerHTML = '✅ Testes OK';
+                    successIndicator.title = 'Todos os testes de segurança passaram';
+                    document.body.appendChild(successIndicator);
+                } else {
+                    console.error('\n⚠️ Alguns testes falharam - verifique o console');
+                    document.body.classList.add('tests-failed');
+                    
+                    // Adicionar indicador visual de falha
+                    const failIndicator = document.createElement('div');
+                    failIndicator.className = 'test-fail-indicator';
+                    failIndicator.innerHTML = '⚠️ Testes';
+                    failIndicator.title = 'Alguns testes falharam - verifique o console';
+                    document.body.appendChild(failIndicator);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro crítico na inicialização:', error);
+                document.body.classList.add('error-state');
+                
+                // Indicador de erro crítico
+                const errorIndicator = document.createElement('div');
+                errorIndicator.className = 'critical-error-indicator';
+                errorIndicator.innerHTML = '🚨 Erro';
+                errorIndicator.title = 'Erro crítico - verifique o console';
+                document.body.appendChild(errorIndicator);
+            }
+        });
     </script>
 </body>
 </html>

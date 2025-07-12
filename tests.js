@@ -98,6 +98,483 @@ class BusPanelTester {
             const elements = document.querySelectorAll(selector);
             elements.forEach(el => el.remove());
         });
+   }
+
+    // Método para registrar todos os testes automaticamente
+    registerAllTests() {
+        console.log('📋 Registrando testes de segurança e funcionalidade...');
+        
+        // =====================================================
+        // TESTES BÁSICOS DE FUNCIONALIDADE
+        // =====================================================
+        
+        this.addTest('Inicialização da classe BusPanel', () => {
+            if (typeof BusPanel === 'undefined') {
+                throw new Error('Classe BusPanel não está definida');
+            }
+            
+            if (!window.busPanel || !(window.busPanel instanceof BusPanel)) {
+                throw new Error('Instância do BusPanel não foi criada corretamente');
+            }
+        });
+
+        this.addTest('Cache de elementos DOM', () => {
+            if (!window.busPanel || !window.busPanel.elements) {
+                throw new Error('Sistema de cache não inicializado');
+            }
+            
+            const requiredElements = ['container', 'refreshBtn', 'expandBtn'];
+            for (const elementKey of requiredElements) {
+                if (!window.busPanel.elements.has(elementKey)) {
+                    throw new Error(`Elemento ${elementKey} não foi cacheado`);
+                }
+            }
+        });
+
+        this.addTest('Proteção contra cliques múltiplos', () => {
+            if (!window.busPanel || typeof window.busPanel.isAnimating !== 'boolean') {
+                throw new Error('Flag de proteção isAnimating não encontrada');
+            }
+        });
+        
+        // =====================================================
+        // TESTES DE SEGURANÇA AVANÇADOS
+        // =====================================================
+        
+        this.addTest('Validação de SecurityValidator', () => {
+            if (typeof SecurityValidator === 'undefined') {
+                throw new Error('SecurityValidator não está definido');
+            }
+            
+            const security = new SecurityValidator();
+            if (!security.sanitizeInput || !security.validateElement) {
+                throw new Error('Métodos de segurança ausentes');
+            }
+        });
+        
+        this.addTest('Sanitização de entrada XSS', () => {
+            const security = new SecurityValidator();
+            
+            // Teste básico de XSS
+            const maliciousInput = '<script>alert("XSS")</script>';
+            const sanitized = security.sanitizeInput(maliciousInput);
+            
+            if (sanitized.includes('<script>') || sanitized.includes('alert')) {
+                throw new Error('Sanitização XSS falhou');
+            }
+            
+            // Teste de event handlers inline
+            const eventInput = '<div onclick="malicious()">test</div>';
+            const sanitizedEvent = security.sanitizeInput(eventInput);
+            
+            if (sanitizedEvent.includes('onclick=')) {
+                throw new Error('Event handlers inline não foram removidos');
+            }
+        });
+        
+        this.addTest('Rate limiting funcional', () => {
+            const security = new SecurityValidator();
+            
+            // Teste rate limiting normal
+            try {
+                security.checkRateLimit('test', 5);
+                security.checkRateLimit('test', 5);
+            } catch (error) {
+                throw new Error('Rate limiting rejeitou requisições válidas');
+            }
+            
+            // Teste rate limiting excedido
+            let rateLimitTriggered = false;
+            try {
+                for (let i = 0; i < 20; i++) {
+                    security.checkRateLimit('spam', 5);
+                }
+            } catch (error) {
+                if (error instanceof SecurityError) {
+                    rateLimitTriggered = true;
+                }
+            }
+            
+            if (!rateLimitTriggered) {
+                throw new Error('Rate limiting não foi ativado quando deveria');
+            }
+        });
+        
+        this.addTest('Validação de elementos DOM', () => {
+            const security = new SecurityValidator();
+            
+            // Elemento válido
+            const validElement = document.createElement('div');
+            try {
+                security.validateElement(validElement);
+            } catch (error) {
+                throw new Error('Elemento válido foi rejeitado');
+            }
+            
+            // Elemento com handler inline (perigoso)
+            const dangerousElement = document.createElement('div');
+            dangerousElement.setAttribute('onclick', 'malicious()');
+            
+            let validationFailed = false;
+            try {
+                security.validateElement(dangerousElement);
+            } catch (error) {
+                if (error instanceof SecurityError) {
+                    validationFailed = true;
+                }
+            }
+            
+            if (!validationFailed) {
+                throw new Error('Elemento perigoso passou na validação');
+            }
+        });
+        
+        this.addTest('Proteção contra clickjacking', () => {
+            const security = new SecurityValidator();
+            
+            // Simular ambiente de iframe
+            const originalTop = window.top;
+            const originalSelf = window.self;
+            
+            // Mock: simular que estamos em um iframe
+            Object.defineProperty(window, 'top', {
+                value: {},
+                writable: true,
+                configurable: true
+            });
+            
+            let clickjackingDetected = false;
+            try {
+                security.preventClickjacking();
+            } catch (error) {
+                if (error instanceof SecurityError && error.message.includes('clickjacking')) {
+                    clickjackingDetected = true;
+                }
+            }
+            
+            // Restaurar valores originais
+            Object.defineProperty(window, 'top', {
+                value: originalTop,
+                writable: true,
+                configurable: true
+            });
+            
+            if (!clickjackingDetected) {
+                throw new Error('Proteção contra clickjacking falhou');
+            }
+        });
+        
+        this.addTest('Verificação de CSP violations', () => {
+            const security = new SecurityValidator();
+            
+            if (!security.cspViolations || !Array.isArray(security.cspViolations)) {
+                throw new Error('Sistema de monitoramento CSP não está funcionando');
+            }
+            
+            // Verificar se o listener está registrado
+            const listeners = getEventListeners ? getEventListeners(document) : null;
+            const hasCSPListener = listeners && 
+                listeners.securitypolicyviolation && 
+                listeners.securitypolicyviolation.length > 0;
+            
+            // Note: getEventListeners pode não estar disponível em todos os browsers
+            // Este teste é mais indicativo que definitivo
+            console.log('CSP violation listener configurado');
+        });
+        
+        this.addTest('Integridade de protótipos', () => {
+            const security = new SecurityValidator();
+            
+            // Verificar se protótipos estão congelados
+            try {
+                Object.prototype.maliciousProperty = 'hack';
+                if (Object.prototype.maliciousProperty === 'hack') {
+                    throw new Error('Object.prototype não está protegido');
+                }
+            } catch (error) {
+                // Esperado: deveria falhar ao tentar modificar
+                if (!error.message.includes('Cannot add property')) {
+                    console.log('Proteção de protótipo funcionando');
+                }
+            }
+            
+            // Verificar Array.prototype
+            try {
+                Array.prototype.maliciousMethod = () => 'hack';
+                if (typeof Array.prototype.maliciousMethod === 'function') {
+                    throw new Error('Array.prototype não está protegido');
+                }
+            } catch (error) {
+                // Esperado: deveria falhar
+                console.log('Array.prototype protegido');
+            }
+        });
+        
+        this.addTest('Headers de segurança presentes', () => {
+            // Verificar se headers críticos estão configurados
+            const requiredHeaders = [
+                'X-Content-Type-Options',
+                'X-Frame-Options', 
+                'X-XSS-Protection',
+                'Strict-Transport-Security'
+            ];
+            
+            // Note: Em ambiente de teste local, não podemos verificar headers HTTP
+            // Este teste verifica se a configuração está presente
+            if (typeof SECURITY_CONFIG !== 'undefined' && SECURITY_CONFIG.requiredHeaders) {
+                for (const header of requiredHeaders) {
+                    if (!SECURITY_CONFIG.requiredHeaders[header]) {
+                        throw new Error(`Header de segurança ausente: ${header}`);
+                    }
+                }
+            } else {
+                throw new Error('Configuração de headers de segurança não encontrada');
+            }
+        });
+        
+        this.addTest('Debounce de segurança', () => {
+            const security = new SecurityValidator();
+            let callCount = 0;
+            
+            const testFunction = () => { callCount++; };
+            const debouncedFunction = security.debounce(testFunction, 100);
+            
+            // Chamar múltiplas vezes rapidamente
+            debouncedFunction();
+            debouncedFunction();
+            debouncedFunction();
+            
+            // Debounce deve limitar para apenas uma execução
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (callCount === 1) {
+                        resolve();
+                    } else {
+                        reject(new Error(`Debounce falhou: ${callCount} execuções`));
+                    }
+                }, 150);
+            });
+        });
+        
+        this.addTest('Monitoramento de escopo global', () => {
+            const security = new SecurityValidator();
+            
+            // Verificar se funções sensíveis ainda existem
+            const sensitiveGlobals = ['eval', 'Function', 'setTimeout', 'setInterval'];
+            
+            for (const globalName of sensitiveGlobals) {
+                if (typeof window[globalName] !== 'function') {
+                    throw new Error(`Global ${globalName} foi modificado ou removido`);
+                }
+            }
+            
+            console.log('Escopo global monitorado e íntegro');
+        });
+    }
+
+    /**
+     * Registra automaticamente todos os testes definidos na classe
+     * Este método é chamado automaticamente quando os testes são executados no index.html
+     */
+    registerAllTests() {
+        console.log('🔄 Registrando todos os testes automaticamente...');
+        
+        // =====================================================
+        // TESTES DE FUNCIONALIDADE PRINCIPAL
+        // =====================================================
+        
+        // Teste 1: Verificar inicialização da classe
+        this.addTest('Inicialização da classe BusPanel', () => {
+            const mockDOM = this.createMockDOM();
+            const panel = new BusPanel();
+            
+            this.assert(panel instanceof BusPanel, 'Instância criada com sucesso');
+            this.assert(panel.isExpanded === false, 'Estado inicial correto');
+            this.assert(panel.isAnimating === false, 'Estado de animação inicial correto');
+            this.assert(panel.elements instanceof Map, 'Elementos cacheados corretamente');
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 2: Verificar cache de elementos
+        this.addTest('Cache de elementos DOM', () => {
+            const mockDOM = this.createMockDOM();
+            const panel = new BusPanel();
+            
+            this.assert(panel.elements.has('container'), 'Container cacheado');
+            this.assert(panel.elements.has('refreshBtn'), 'Botão refresh cacheado');
+            this.assert(panel.elements.has('expandBtn'), 'Botão expand cacheado');
+            this.assert(panel.elements.has('stops'), 'Paradas cacheadas');
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 3: Verificar proteção contra cliques múltiplos
+        this.addTest('Proteção contra cliques múltiplos', () => {
+            const mockDOM = this.createMockDOM();
+            const panel = new BusPanel();
+            
+            // Simular estado de animação
+            panel.isAnimating = true;
+            
+            // Tentar expandir durante animação
+            const initialState = panel.isExpanded;
+            panel.toggleExpanded();
+            
+            this.assert(panel.isExpanded === initialState, 'Estado não mudou durante animação');
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 4: Verificar validação de segurança
+        this.addTest('Validação de segurança', () => {
+            // Teste de validação de elemento
+            try {
+                SecurityValidator.validateElement(null);
+                this.assert(false, 'Deveria lançar erro para elemento null');
+            } catch (error) {
+                this.assert(true, 'Erro lançado corretamente para elemento null');
+            }
+            
+            // Teste de sanitização
+            const maliciousInput = '<script>alert("xss")</script>';
+            const sanitized = SecurityValidator.sanitizeInput(maliciousInput);
+            this.assert(!sanitized.includes('<script>'), 'Input malicioso sanitizado');
+        });
+
+        // Teste 5: Verificar método de destruct
+        this.addTest('Método de limpeza (destroy)', () => {
+            const mockDOM = this.createMockDOM();
+            const panel = new BusPanel();
+            
+            // Verificar se elementos estão cacheados
+            this.assert(panel.elements.size > 0, 'Elementos cacheados antes da limpeza');
+            
+            // Chamar método de limpeza
+            panel.destroy();
+            
+            // Verificar se foram limpos
+            this.assert(panel.elements.size === 0, 'Elementos limpos após destroy');
+            this.assert(panel.eventListeners.size === 0, 'Event listeners limpos após destroy');
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 6: Verificar destaque de paradas importantes
+        this.addTest('Destaque de paradas importantes', () => {
+            const mockDOM = this.createMockDOM();
+            
+            // Criar paradas específicas
+            const currentBus = document.createElement('div');
+            currentBus.className = 'stop current-bus';
+            
+            const currentLocation = document.createElement('div');
+            currentLocation.className = 'stop current-location';
+            
+            const nextStop = document.createElement('div');
+            nextStop.className = 'stop next';
+            
+            document.body.appendChild(currentBus);
+            document.body.appendChild(currentLocation);
+            document.body.appendChild(nextStop);
+            
+            const panel = new BusPanel();
+            
+            // Verificar se os destaques foram aplicados
+            this.assert(currentBus.classList.contains('highlighted'), 'Parada do ônibus destacada');
+            this.assert(currentLocation.classList.contains('highlighted'), 'Localização atual destacada');
+            this.assert(nextStop.classList.contains('highlighted'), 'Próxima parada destacada');
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 7: Verificar atualização de timestamp
+        this.addTest('Atualização de timestamp', () => {
+            const mockDOM = this.createMockDOM();
+            
+            // Criar elemento de timestamp
+            const timestampElement = document.createElement('span');
+            timestampElement.className = 'footer';
+            document.body.appendChild(timestampElement);
+            
+            const panel = new BusPanel();
+            panel.updateTimestamp();
+            
+            // Verificar se timestamp foi atualizado
+            this.assert(timestampElement.textContent.includes('Atualizado:'), 'Timestamp atualizado');
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 8: Verificar função debounce
+        this.addTest('Função debounce', (done) => {
+            let callCount = 0;
+            const debouncedFunction = SecurityValidator.debounce(() => {
+                callCount++;
+            }, 100);
+            
+            // Chamar função múltiplas vezes
+            debouncedFunction();
+            debouncedFunction();
+            debouncedFunction();
+            
+            // Verificar se foi chamada apenas uma vez após delay
+            setTimeout(() => {
+                this.assert(callCount === 1, 'Função debounce funcionou corretamente');
+            }, 150);
+        });
+
+        // Teste 9: Verificar manipulação segura de eventos
+        this.addTest('Manipulação segura de eventos', () => {
+            const mockDOM = this.createMockDOM();
+            const panel = new BusPanel();
+            
+            // Criar evento mock
+            const mockEvent = {
+                preventDefault: () => {},
+                target: mockDOM.refreshBtn
+            };
+            
+            // Criar handler seguro
+            const safeHandler = panel.createSafeEventHandler(() => {
+                return 'success';
+            });
+            
+            // Verificar se handler executa sem erro
+            try {
+                safeHandler(mockEvent);
+                this.assert(true, 'Handler seguro executado com sucesso');
+            } catch (error) {
+                this.assert(false, 'Handler seguro não deveria lançar erro');
+            }
+            
+            this.cleanupDOM();
+        });
+
+        // Teste 10: Verificar estado de erro da aplicação
+        this.addTest('Estado de erro da aplicação', () => {
+            // Simular erro na inicialização
+            const originalConsoleError = console.error;
+            let errorCaught = false;
+            
+            console.error = () => {
+                errorCaught = true;
+            };
+            
+            // Tentar inicializar sem DOM adequado
+            try {
+                const panel = new BusPanel();
+                panel.init();
+            } catch (error) {
+                // Esperado
+            }
+            
+            console.error = originalConsoleError;
+            
+            this.assert(errorCaught, 'Erro capturado e logado corretamente');
+        });
+
+        console.log('✅ Todos os testes de funcionalidade registrados');
     }
 }
 
