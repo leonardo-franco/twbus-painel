@@ -207,6 +207,11 @@
                 <i class="fas fa-sync-alt"></i>
                 <span>Atualizado: 14:32</span>
             </div>
+            <div class="admin-access" style="position: relative;">
+                <button id="adminBtn" class="admin-btn" style="background: none; border: none; color: rgba(255,255,255,0.2); font-size: 0.8rem; cursor: pointer; padding: 4px 8px; transition: all 0.3s; border-radius: 4px;" title="Acesso Administrativo">
+                    ⚙️
+                </button>
+            </div>
         </div>
     </div>
 
@@ -400,6 +405,37 @@
         window.addEventListener('offline', () => {
             console.log('📱 Modo offline ativado');
             document.body.classList.add('offline');
+        });
+        
+        // Admin access button
+        document.getElementById('adminBtn').addEventListener('click', function() {
+            let clickCount = this.dataset.clicks || 0;
+            clickCount++;
+            this.dataset.clicks = clickCount;
+            
+            // Múltiplos cliques para acesso administrativo (segurança por obscuridade)
+            if (clickCount >= 5) {
+                window.location.href = 'admin-login.html';
+            }
+            
+            // Reset counter após 3 segundos
+            setTimeout(() => {
+                this.dataset.clicks = 0;
+            }, 3000);
+            
+            // Feedback visual
+            this.style.color = clickCount >= 3 ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.2)';
+        });
+        
+        // Hover effect para o botão admin
+        document.getElementById('adminBtn').addEventListener('mouseenter', function() {
+            this.style.color = 'rgba(255,255,255,0.5)';
+            this.style.background = 'rgba(255,255,255,0.1)';
+        });
+        
+        document.getElementById('adminBtn').addEventListener('mouseleave', function() {
+            this.style.color = 'rgba(255,255,255,0.2)';
+            this.style.background = 'none';
         });
     </script>
 </body>

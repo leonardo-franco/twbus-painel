@@ -93,6 +93,20 @@
 </head>
 <body>
     <div class="container">
+        <!-- Cabeçalho Administrativo -->
+        <div class="admin-header" style="background: rgba(255, 255, 255, 0.1); padding: 15px 20px; border-radius: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #ef4444;">
+            <div>
+                <h3 style="margin: 0; color: #ef4444; font-size: 1.1rem;">🔒 Área Administrativa</h3>
+                <p style="margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8;">Acesso restrito - Ferramentas de teste e diagnóstico</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span id="session-info" style="font-size: 0.8rem; opacity: 0.7;"></span>
+                <button onclick="logout()" style="background: rgba(239, 68, 68, 0.8); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+        
         <h1>🚌 Verificação de Testes Automáticos</h1>
         
         <div class="status-card">
@@ -126,6 +140,124 @@
     <script src="security-config.js"></script>
     <script src="script.js"></script>
     <script src="tests.js"></script>
+    
+    <script>
+        // =====================================================
+        // VERIFICAÇÃO DE AUTENTICAÇÃO ADMINISTRATIVA
+        // =====================================================
+        
+        function checkAdminAuth() {
+            try {
+                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                const isActive = sessionStorage.getItem('twbus_admin_active') === 'true';
+                const sessionTimeout = 30 * 60 * 1000; // 30 minutos
+                
+                const isAuthenticated = session.authenticated && 
+                                       session.expires > Date.now() && 
+                                       isActive &&
+                                       session.token;
+                
+                if (!isAuthenticated) {
+                    // Redirecionar para login
+                    window.location.href = 'admin-login.html';
+                    return false;
+                }
+                
+                // Verificar se a sessão está próxima do timeout
+                const timeLeft = session.expires - Date.now();
+                if (timeLeft < 5 * 60 * 1000) { // Menos de 5 minutos
+                    showSessionWarning(Math.floor(timeLeft / 60000));
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Erro na verificação de autenticação:', error);
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+        }
+        
+        function showSessionWarning(minutesLeft) {
+            const warningDiv = document.createElement('div');
+            warningDiv.id = 'session-warning';
+            warningDiv.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: rgba(245, 158, 11, 0.95);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 14px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                animation: slideIn 0.3s ease;
+            `;
+            warningDiv.innerHTML = `
+                ⚠️ Sessão expira em ${minutesLeft} minuto(s)
+                <button onclick="extendSession()" style="margin-left: 10px; padding: 4px 8px; background: rgba(255,255,255,0.2); border: none; border-radius: 4px; color: white; cursor: pointer;">Estender</button>
+            `;
+            
+            document.body.appendChild(warningDiv);
+            
+            // Remover após 10 segundos
+            setTimeout(() => {
+                if (document.getElementById('session-warning')) {
+                    document.getElementById('session-warning').remove();
+                }
+            }, 10000);
+        }
+        
+        function extendSession() {
+            try {
+                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                session.expires = Date.now() + (30 * 60 * 1000); // Mais 30 minutos
+                localStorage.setItem('twbus_admin_session', JSON.stringify(session));
+                
+                const warningDiv = document.getElementById('session-warning');
+                if (warningDiv) {
+                    warningDiv.innerHTML = '✅ Sessão estendida por mais 30 minutos';
+                    setTimeout(() => warningDiv.remove(), 3000);
+                }
+                
+                console.log('🔄 Sessão administrativa estendida');
+            } catch (error) {
+                console.error('Erro ao estender sessão:', error);
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('twbus_admin_session');
+            sessionStorage.removeItem('twbus_admin_active');
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Verificar autenticação antes de carregar a página
+        if (!checkAdminAuth()) {
+            // Se não autenticado, a página será redirecionada
+            document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: white;">🔄 Verificando autenticação...</div>';
+        }
+        
+        // Atualizar informações da sessão
+        function updateSessionInfo() {
+            try {
+                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                const sessionInfo = document.getElementById('session-info');
+                
+                if (session.expires) {
+                    const timeLeft = session.expires - Date.now();
+                    const minutesLeft = Math.floor(timeLeft / 60000);
+                    sessionInfo.textContent = `Sessão: ${minutesLeft}min restantes`;
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar info da sessão:', error);
+            }
+        }
+        
+        // Atualizar a cada minuto
+        setInterval(updateSessionInfo, 60000);
+        setTimeout(updateSessionInfo, 1000);
+    </script>
     
     <script>
         // =====================================================
