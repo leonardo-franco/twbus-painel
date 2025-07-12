@@ -270,9 +270,8 @@
                 document.body.appendChild(errorIndicator);
             }
         });
-    </script>
-</body>
-</html>
+        
+        // PWA e Service Worker
         let deferredPrompt;
         let installBtn = document.getElementById('installBtn');
         let installBanner = document.getElementById('installBanner');
@@ -320,12 +319,14 @@
             // Show install banner after 3 seconds
             setTimeout(() => {
                 if (!localStorage.getItem('pwa-dismissed')) {
-                    installBanner.style.display = 'block';
-                    installBanner.classList.add('show');
+                    if (installBanner) {
+                        installBanner.style.display = 'block';
+                        installBanner.classList.add('show');
+                    }
                 }
             }, 3000);
             
-            installBtn.style.display = 'flex';
+            if (installBtn) installBtn.style.display = 'flex';
         });
 
         // Install button click
@@ -372,7 +373,7 @@
         // App installed
         window.addEventListener('appinstalled', () => {
             console.log('🎉 PWA: App instalado com sucesso');
-            installBtn.style.display = 'none';
+            if (installBtn) installBtn.style.display = 'none';
             hideBanner();
             
             // Show welcome message
@@ -417,35 +418,40 @@
         });
         
         // Admin access button
-        document.getElementById('adminBtn').addEventListener('click', function() {
-            let clickCount = this.dataset.clicks || 0;
-            clickCount++;
-            this.dataset.clicks = clickCount;
+        const adminBtn = document.getElementById('adminBtn');
+        if (adminBtn) {
+            adminBtn.addEventListener('click', function() {
+                let clickCount = this.dataset.clicks || 0;
+                clickCount++;
+                this.dataset.clicks = clickCount;
+                
+                // Múltiplos cliques para acesso administrativo (segurança por obscuridade)
+                if (clickCount >= 5) {
+                    window.location.href = 'admin-login.html';
+                }
+                
+                // Reset counter após 3 segundos
+                setTimeout(() => {
+                    this.dataset.clicks = 0;
+                }, 3000);
+                
+                // Feedback visual
+                this.style.color = clickCount >= 3 ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.2)';
+            });
             
-            // Múltiplos cliques para acesso administrativo (segurança por obscuridade)
-            if (clickCount >= 5) {
-                window.location.href = 'admin-login.html';
-            }
+            // Hover effect para o botão admin
+            adminBtn.addEventListener('mouseenter', function() {
+                this.style.color = 'rgba(255,255,255,0.5)';
+                this.style.background = 'rgba(255,255,255,0.1)';
+            });
             
-            // Reset counter após 3 segundos
-            setTimeout(() => {
-                this.dataset.clicks = 0;
-            }, 3000);
-            
-            // Feedback visual
-            this.style.color = clickCount >= 3 ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.2)';
-        });
-        
-        // Hover effect para o botão admin
-        document.getElementById('adminBtn').addEventListener('mouseenter', function() {
-            this.style.color = 'rgba(255,255,255,0.5)';
-            this.style.background = 'rgba(255,255,255,0.1)';
-        });
-        
-        document.getElementById('adminBtn').addEventListener('mouseleave', function() {
-            this.style.color = 'rgba(255,255,255,0.2)';
-            this.style.background = 'none';
-        });
+            adminBtn.addEventListener('mouseleave', function() {
+                this.style.color = 'rgba(255,255,255,0.2)';
+                this.style.background = 'none';
+            });
+        }
     </script>
+</body>
+</html>
 </body>
 </html>

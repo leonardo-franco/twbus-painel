@@ -1,6 +1,6 @@
 {
   "name": "twbus-painel",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Painel interativo para informações de parada de ônibus em tempo real",
   "main": "index.html",
   "scripts": {

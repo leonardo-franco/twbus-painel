@@ -1,7 +1,7 @@
-// TwBus Service Worker v1.1.1
+// TwBus Service Worker v1.2.0
 // Implementa cache inteligente e funcionalidade offline
 
-const CACHE_NAME = 'twbus-v1.1.1';
+const CACHE_NAME = 'twbus-v1.2.0';
 const CACHE_URLS = [
   '/',
   '/index.html',
