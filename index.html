@@ -7,6 +7,10 @@
     <meta name="keywords" content="ônibus, transporte público, parada, tempo real, São Paulo">
     <meta name="author" content="TwBus">
     
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="icon" type="image/png" href="icon-512.svg">
+    
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -221,41 +225,52 @@
         // Inicialização do painel e testes automáticos
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // Aguardar carregamento dos scripts
+                if (typeof BusPanel === 'undefined') {
+                    console.warn('⚠️ BusPanel não encontrado, usando modo básico');
+                    return;
+                }
+                
                 // Inicializar painel principal
                 window.busPanel = new BusPanel();
                 console.log('✅ Painel TwBus inicializado com sucesso');
                 
-                // Executar testes de segurança automaticamente
-                console.log('\n🔒 Iniciando testes de segurança automáticos...');
-                const tester = new BusPanelTester();
-                
-                // Registrar todos os testes
-                tester.registerAllTests();
-                
-                // Executar testes
-                const testsPassed = await tester.runAllTests();
-                
-                // Mostrar resultado visual
-                if (testsPassed) {
-                    console.log('\n🎉 Todos os testes de segurança passaram!');
-                    document.body.classList.add('tests-passed');
+                // Verificar se o sistema de testes está disponível
+                if (typeof BusPanelTester !== 'undefined') {
+                    // Executar testes de segurança automaticamente
+                    console.log('\n🔒 Iniciando testes de segurança automáticos...');
+                    const tester = new BusPanelTester();
                     
-                    // Adicionar indicador visual de sucesso
-                    const successIndicator = document.createElement('div');
-                    successIndicator.className = 'test-success-indicator';
-                    successIndicator.innerHTML = '✅ Testes OK';
-                    successIndicator.title = 'Todos os testes de segurança passaram';
-                    document.body.appendChild(successIndicator);
+                    // Registrar todos os testes
+                    tester.registerAllTests();
+                    
+                    // Executar testes
+                    const testsPassed = await tester.runAllTests();
+                    
+                    // Mostrar resultado visual
+                    if (testsPassed) {
+                        console.log('\n🎉 Todos os testes de segurança passaram!');
+                        document.body.classList.add('tests-passed');
+                        
+                        // Adicionar indicador visual de sucesso
+                        const successIndicator = document.createElement('div');
+                        successIndicator.className = 'test-success-indicator';
+                        successIndicator.innerHTML = '✅ Testes OK';
+                        successIndicator.title = 'Todos os testes de segurança passaram';
+                        document.body.appendChild(successIndicator);
+                    } else {
+                        console.error('\n⚠️ Alguns testes falharam - verifique o console');
+                        document.body.classList.add('tests-failed');
+                        
+                        // Adicionar indicador visual de falha
+                        const failIndicator = document.createElement('div');
+                        failIndicator.className = 'test-fail-indicator';
+                        failIndicator.innerHTML = '⚠️ Testes';
+                        failIndicator.title = 'Alguns testes falharam - verifique o console';
+                        document.body.appendChild(failIndicator);
+                    }
                 } else {
-                    console.error('\n⚠️ Alguns testes falharam - verifique o console');
-                    document.body.classList.add('tests-failed');
-                    
-                    // Adicionar indicador visual de falha
-                    const failIndicator = document.createElement('div');
-                    failIndicator.className = 'test-fail-indicator';
-                    failIndicator.innerHTML = '⚠️ Testes';
-                    failIndicator.title = 'Alguns testes falharam - verifique o console';
-                    document.body.appendChild(failIndicator);
+                    console.warn('⚠️ Sistema de testes não carregado');
                 }
                 
             } catch (error) {

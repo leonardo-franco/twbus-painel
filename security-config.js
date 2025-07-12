@@ -131,14 +131,14 @@ const CSP_POLICIES = {
         "data:",
         "https:"
     ],
-    'connect-src': ["'self'"],
+    'connect-src': ["'self'", "https://twbus.vercel.app"],
     'frame-ancestors': ["'none'"],
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
     'object-src': ["'none'"],
     'media-src': ["'none'"],
     'child-src': ["'none'"],
-    'worker-src': ["'none'"],
+    'worker-src': ["'self'"],
     'manifest-src': ["'self'"]
 };
 

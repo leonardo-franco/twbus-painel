@@ -514,41 +514,10 @@ class BusPanel {
 }
 
 
-// Funcionalidade de segurança - Validação de entrada
-class SecurityValidator {
-    static validateElement(element, type = 'HTMLElement') {
-        if (!element) {
-            throw new Error(`Elemento ${type} não encontrado`);
-        }
-        return element;
-    }
-
-    static sanitizeInput(input) {
-        if (typeof input !== 'string') return input;
-        return input.replace(/[<>]/g, '');
-    }
-
-    static debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
+// Exportar classes para uso global
+if (typeof window !== 'undefined') {
+    window.SecurityValidator = SecurityValidator;
+    window.BusPanel = BusPanel;
 }
 
-// Inicialização segura do painel
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        window.busPanel = new BusPanel();
-        console.log('Painel TwBus inicializado com sucesso');
-    } catch (error) {
-        console.error('Erro ao inicializar painel:', error);
-        // Fallback para funcionalidade básica
-        document.body.classList.add('error-state');
-    }
-});
+console.log('✅ Script principal carregado com sucesso');
