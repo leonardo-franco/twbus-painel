@@ -1,31 +1,5 @@
 {
   "version": 2,
-  "name": "twbus",
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/sw.js",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Service-Worker-Allowed": "/"
-      }
-    },
-    {
-      "src": "/manifest.json",
-      "headers": {
-        "Content-Type": "application/json"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -49,7 +23,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2))",
+      "source": "/.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2)",
       "headers": [
         {
           "key": "Cache-Control",
