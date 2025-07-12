@@ -9,19 +9,205 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             min-height: 100vh;
             color: white;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: #ef4444;
+        }
+        
+        .sidebar-header p {
+            margin: 5px 0 0;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .nav-section {
+            margin-bottom: 25px;
+        }
+        
+        .nav-section h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .nav-item.active {
+            background: rgba(79, 70, 229, 0.3);
+            border-left: 3px solid #4f46e5;
+        }
+        
+        .nav-item .icon {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-item .text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .nav-item .badge {
+            margin-left: auto;
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+        
+        .user-info .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .session-status {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin: 5px 0;
+        }
+        
+        .logout-btn {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 1);
+            transform: translateY(-2px);
+        }
+        
+        .toggle-sidebar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            display: none;
+        }
+        
+        .toggle-sidebar:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .content-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
         }
         
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: none;
+            margin: 0;
+            background: none;
+            backdrop-filter: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
         }
         
         h1 {
@@ -92,173 +278,58 @@
 
         /* Responsividade para tablets */
         @media (max-width: 768px) {
-            body {
-                padding: 15px;
+            .sidebar {
+                width: 250px;
             }
             
-            .container {
-                padding: 20px;
-                margin: 0 auto;
+            .main-content {
+                margin-left: 250px;
             }
             
-            h1 {
-                font-size: 1.7rem !important;
-                margin-bottom: 20px !important;
+            .nav-item {
+                padding: 10px 12px;
             }
             
-            .admin-header {
-                padding: 12px 15px !important;
-                margin-bottom: 15px !important;
+            .nav-item .text {
+                font-size: 0.85rem;
             }
             
-            .admin-header h3 {
-                font-size: 1rem !important;
-            }
-            
-            .admin-header p {
-                font-size: 0.85rem !important;
-            }
-            
-            .status-card {
-                padding: 15px !important;
-                margin: 15px 0 !important;
-            }
-            
-            .test-result {
-                font-size: 13px !important;
-                padding: 6px 10px !important;
-            }
-            
-            .console-output {
-                font-size: 11px !important;
-                padding: 12px !important;
-                max-height: 250px !important;
-            }
-            
-            .btn {
-                padding: 10px 18px !important;
-                font-size: 13px !important;
-                margin: 3px !important;
+            .toggle-sidebar {
+                display: block;
             }
         }
 
         /* Responsividade para mobile */
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            .container {
-                padding: 15px;
-                border-radius: 15px;
-                margin: 0;
-            }
-            
-            h1 {
-                font-size: 1.5rem !important;
-                margin-bottom: 15px !important;
-            }
-            
-            .admin-header {
-                padding: 10px 12px !important;
-                margin-bottom: 12px !important;
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: 10px;
-            }
-            
-            .admin-header .logout-container {
+            .sidebar {
                 width: 100%;
-                display: flex;
-                justify-content: center;
+                transform: translateX(-100%);
             }
             
-            .admin-header button {
-                padding: 8px 16px !important;
-                font-size: 0.85rem !important;
-                border-radius: 8px !important;
+            .sidebar.visible {
+                transform: translateX(0);
             }
             
-            .admin-header h3 {
-                font-size: 0.95rem !important;
-                margin: 0 !important;
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
             }
             
-            .admin-header p {
-                font-size: 0.8rem !important;
-                margin: 0 !important;
+            .toggle-sidebar {
+                display: block;
             }
             
-            .session-info {
-                font-size: 0.8rem !important;
-                text-align: left !important;
+            .content-section {
+                padding: 15px;
+                border-radius: 10px;
             }
             
-            .status-card {
-                padding: 12px !important;
-                margin: 12px 0 !important;
-                border-radius: 10px !important;
+            .nav-item {
+                padding: 12px 15px;
             }
             
-            .test-result {
-                font-size: 12px !important;
-                padding: 5px 8px !important;
-                margin: 3px 0 !important;
-            }
-            
-            .console-output {
-                font-size: 10px !important;
-                padding: 10px !important;
-                max-height: 200px !important;
-                border-radius: 6px !important;
-            }
-            
-            .btn {
-                padding: 8px 15px !important;
-                font-size: 12px !important;
-                margin: 2px !important;
-                border-radius: 6px !important;
-            }
-            
-            .btn-container {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 5px;
-                justify-content: center;
-            }
-        }
-
-        /* Responsividade para telas muito pequenas */
-        @media (max-width: 320px) {
-            .container {
-                padding: 12px;
-            }
-            
-            h1 {
-                font-size: 1.3rem !important;
-            }
-            
-            .admin-header {
-                padding: 8px 10px !important;
-            }
-            
-            .admin-header h3 {
-                font-size: 0.9rem !important;
-            }
-            
-            .status-card {
-                padding: 10px !important;
-            }
-            
-            .test-result {
-                font-size: 11px !important;
-                padding: 4px 6px !important;
-            }
-            
-            .console-output {
-                font-size: 9px !important;
-                padding: 8px !important;
-                max-height: 150px !important;
+            .sidebar-header h2 {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -315,29 +386,39 @@
     
     <script>
         // ⚠️ PROTEÇÃO IMEDIATA: Verificação de autenticação antes de carregar a página
-        (function() {
-            try {
-                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
-                const isActive = sessionStorage.getItem('twbus_admin_active') === 'true';
-                
-                const isAuthenticated = session.authenticated && 
-                                       session.expires > Date.now() && 
-                                       isActive &&
-                                       session.token;
-                
-                if (!isAuthenticated) {
-                    // Redirecionamento imediato para login
+        document.addEventListener('DOMContentLoaded', function() {
+            // Função para verificar autenticação
+            function checkAuth() {
+                try {
+                    const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                    const isActive = sessionStorage.getItem('twbus_admin_active') === 'true';
+                    
+                    const isAuthenticated = session.authenticated && 
+                                           session.expires > Date.now() && 
+                                           isActive &&
+                                           session.token;
+                    
+                    if (!isAuthenticated) {
+                        console.log('❌ Não autenticado - redirecionando para login');
+                        window.location.replace('admin-login.html');
+                        return false;
+                    }
+                    
+                    console.log('✅ Autenticação válida');
+                    return true;
+                } catch (error) {
+                    console.error('Erro na verificação de autenticação:', error);
                     window.location.replace('admin-login.html');
-                    throw new Error('Redirecionando para login...');
+                    return false;
                 }
-            } catch (error) {
-                console.error('Acesso negado:', error.message);
-                if (!window.location.href.includes('admin-login.html')) {
-                    window.location.replace('admin-login.html');
-                }
-                throw error;
             }
-        })();
+            
+            // Verificar imediatamente
+            if (!checkAuth()) {
+                document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🔄 Verificando autenticação...</div>';
+                return;
+            }
+        });
 
         // =====================================================
         // VERIFICAÇÃO DE AUTENTICAÇÃO ADMINISTRATIVA
