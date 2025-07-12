@@ -356,3 +356,4 @@ O painel TwBus agora é:
 - **HTTPS:** Ativo com certificado automático
 
 ### 📱 **Como Instalar o PWA:**
+# Deploy funcionando com package.json
