@@ -1,0 +1,50 @@
+{
+  "name": "twbus-painel",
+  "version": "1.0.0",
+  "description": "Painel interativo para informações de parada de ônibus em tempo real",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "build": "echo 'Static files - no build needed'",
+    "test": "echo 'Running tests...' && node tests.js",
+    "lint": "echo 'Linting files...'",
+    "preview": "npx serve . -p 4173"
+  },
+  "keywords": [
+    "bus",
+    "transport",
+    "pwa",
+    "real-time",
+    "public-transport"
+  ],
+  "author": "TwBus Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twbus/painel"
+  },
+  "bugs": {
+    "url": "https://github.com/twbus/painel/issues"
+  },
+  "homepage": "https://twbus.vercel.app",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "pwa": {
+    "name": "TwBus - Painel de Parada",
+    "short_name": "TwBus",
+    "theme_color": "#764ba2",
+    "background_color": "#667eea",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/"
+  }
+}
