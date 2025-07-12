@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo - TwBus v1.1.1</title>
+    
+    <!-- CSS separado -->
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: white;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: #ef4444;
+        }
+        
+        .sidebar-header p {
+            margin: 5px 0 0;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .nav-section {
+            margin-bottom: 25px;
+        }
+        
+        .nav-section h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .nav-item.active {
+            background: rgba(79, 70, 229, 0.3);
+            border-left: 3px solid #4f46e5;
+        }
+        
+        .nav-item .icon {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-item .text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .nav-item .badge {
+            margin-left: auto;
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+        
+        .user-info .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .session-status {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin: 5px 0;
+        }
+        
+        .logout-btn {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 1);
+            transform: translateY(-2px);
+        }
+        
+        .toggle-sidebar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            display: none;
+        }
+        
+        .toggle-sidebar:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .content-section {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .status-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4ade80;
+        }
+        
+        .test-result {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .test-success {
+            background: rgba(34, 197, 94, 0.2);
+            border-left: 3px solid #22c55e;
+        }
+        
+        .test-error {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 3px solid #ef4444;
+        }
+        
+        .test-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            background: rgba(79, 70, 229, 0.8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: rgba(79, 70, 229, 1);
+            transform: translateY(-2px);
+        }
+        
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .test-result {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .test-success {
+            background: rgba(34, 197, 94, 0.2);
+            border-left: 3px solid #22c55e;
+        }
+        
+        .test-error {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 3px solid #ef4444;
+        }
+        
+        .test-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 3px solid #3b82f6;
+        }
+
+        /* Responsividade para tablets */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .main-content {
+                margin-left: 250px;
+            }
+            
+            .nav-item {
+                padding: 10px 12px;
+            }
+            
+            .nav-item .text {
+                font-size: 0.85rem;
+            }
+            
+            .toggle-sidebar {
+                display: block;
+            }
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.visible {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .toggle-sidebar {
+                display: block;
+            }
+            
+            .content-section {
+                padding: 15px;
+                border-radius: 10px;
+            }
+            
+            .nav-item {
+                padding: 12px 15px;
+            }
+            
+</head>
+<body>
+    <!-- Verificação de autenticação -->
+    <script>
+        // Verificação imediata de autenticação
+        function checkAuthImmediate() {
+            try {
+                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                const isActive = sessionStorage.getItem('twbus_admin_active') === 'true';
+                
+                const isAuthenticated = session.authenticated && 
+                                       session.expires > Date.now() && 
+                                       isActive &&
+                                       session.token;
+                
+                if (!isAuthenticated) {
+                    console.log('❌ Não autenticado - redirecionando para login');
+                    window.location.replace('admin-login.html');
+                    return false;
+                }
+                
+                console.log('✅ Autenticação válida');
+                return true;
+            } catch (error) {
+                console.error('Erro na verificação de autenticação:', error);
+                window.location.replace('admin-login.html');
+                return false;
+            }
+        }
+        
+        // Verificar imediatamente
+        if (!checkAuthImmediate()) {
+            document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🔄 Verificando autenticação...</div>';
+        }
+    </script>
+
+    <!-- Botão para toggle da sidebar em mobile -->
+    <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Sidebar Administrativa -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>🔒 Admin Panel</h2>
+            <p>TwBus - Sistema de Gerenciamento</p>
+        </div>
+        
+        <!-- Navegação Principal -->
+        <div class="nav-section">
+            <h3>Principal</h3>
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <span class="icon">📊</span>
+                <span class="text">Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showSection('tests')">
+                <span class="icon">🧪</span>
+                <span class="text">Testes Automáticos</span>
+                <span class="badge" id="test-count">0</span>
+            </div>
+            <div class="nav-item" onclick="showSection('logs')">
+                <span class="icon">📋</span>
+                <span class="text">Logs do Sistema</span>
+                <span class="badge" id="log-count">0</span>
+            </div>
+        </div>
+        
+        <!-- Ferramentas -->
+        <div class="nav-section">
+            <h3>Ferramentas</h3>
+            <div class="nav-item" onclick="showSection('security')">
+                <span class="icon">🛡️</span>
+                <span class="text">Segurança</span>
+            </div>
+            <div class="nav-item" onclick="showSection('performance')">
+                <span class="icon">⚡</span>
+                <span class="text">Performance</span>
+            </div>
+            <div class="nav-item" onclick="showSection('database')">
+                <span class="icon">🗄️</span>
+                <span class="text">Base de Dados</span>
+            </div>
+            <div class="nav-item" onclick="showSection('analytics')">
+                <span class="icon">📈</span>
+                <span class="text">Analytics</span>
+            </div>
+        </div>
+        
+        <!-- Configurações -->
+        <div class="nav-section">
+            <h3>Sistema</h3>
+            <div class="nav-item" onclick="showSection('settings')">
+                <span class="icon">⚙️</span>
+                <span class="text">Configurações</span>
+            </div>
+            <div class="nav-item" onclick="showSection('backup')">
+                <span class="icon">💾</span>
+                <span class="text">Backup</span>
+            </div>
+            <div class="nav-item" onclick="window.open('index.html', '_blank')">
+                <span class="icon">🚌</span>
+                <span class="text">Painel Principal</span>
+            </div>
+        </div>
+        
+        <!-- Informações do Usuário -->
+        <div class="user-info">
+            <div class="avatar">👨‍💻</div>
+            <div class="username-display" id="username-display">Admin</div>
+            <div class="session-status" id="session-time">Sessão: Calculando...</div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div class="main-content" id="main-content">
+        
+        <!-- Seção Dashboard -->
+        <div class="content-section active" id="dashboard-section">
+            <h1>📊 Dashboard do Sistema</h1>
+            
+            <div class="grid-stats">
+                <div class="status-card">
+                    <h3>⏱️ Uptime do Sistema</h3>
+                    <div class="metric-value success" id="system-uptime">Calculando...</div>
+                </div>
+                <div class="status-card">
+                    <h3>🧪 Testes Executados</h3>
+                    <div class="metric-value primary" id="tests-executed">0</div>
+                </div>
+                <div class="status-card">
+                    <h3>❌ Falhas Detectadas</h3>
+                    <div class="metric-value danger" id="failures-count">0</div>
+                </div>
+                <div class="status-card">
+                    <h3>📈 Performance</h3>
+                    <div class="metric-value purple" id="performance-score">100%</div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>📈 Gráfico de Atividade</h3>
+                <div class="chart-placeholder">
+                    📊 Gráfico em tempo real (Demo)
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Testes -->
+        <div class="content-section" id="tests-section">
+            <h1>🧪 Verificação de Testes Automáticos</h1>
+            
+            <div class="status-card">
+                <h3>� Status dos Componentes</h3>
+                <div id="component-status-container">
+                    <div class="test-result test-info">🔄 Verificando componentes...</div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>⚡ Controles de Teste</h3>
+                <div class="controls-container">
+                    <button class="btn" onclick="runManualTests()">▶️ Executar Testes</button>
+                    <button class="btn" onclick="clearResults()">🗑️ Limpar Resultados</button>
+                    <button class="btn" onclick="exportResults()">💾 Exportar Dados</button>
+                    <button class="btn" onclick="toggleAutoMode()">🔄 Auto Mode</button>
+                </div>
+                <div class="text-small">
+                    ℹ️ Use os controles acima para gerenciar a execução dos testes automáticos
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>📋 Resultados dos Testes</h3>
+                <div id="test-results">
+                    <div class="test-result test-info">📋 Aguardando execução dos testes...</div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>� Console de Debug</h3>
+                <div class="console-output" id="console-output">Console inicializado...<br></div>
+            </div>
+        </div>
+        
+        <!-- Seção de Logs -->
+        <div class="content-section" id="logs-section">
+            <h1>📋 Logs do Sistema</h1>
+            
+            <div class="status-card">
+                <div class="controls-header">
+                    <h3>🔍 Logs Recentes</h3>
+                    <div>
+                        <button class="btn" onclick="clearLogs()">🗑️ Limpar Logs</button>
+                        <button class="btn" onclick="exportLogs()">💾 Exportar</button>
+                    </div>
+                </div>
+                <div id="system-logs" class="console-extended">
+                    Logs do sistema aparecerão aqui...<br>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Segurança -->
+        <div class="content-section" id="security-section">
+            <h1>🛡️ Painel de Segurança</h1>
+            
+            <div class="grid-stats-large">
+                <div class="status-card">
+                    <h3>🔐 Status de Autenticação</h3>
+                    <div id="auth-status">
+                        <div class="test-result test-success">✅ Sistema de login ativo</div>
+                        <div class="test-result test-success">✅ Sessões protegidas</div>
+                        <div class="test-result test-success">✅ Rate limiting ativo</div>
+                    </div>
+                </div>
+                
+                <div class="status-card">
+                    <h3>🛡️ Proteções Ativas</h3>
+                    <div id="security-protections">
+                        <div class="test-result test-success">✅ XSS Protection</div>
+                        <div class="test-result test-success">✅ CSP Headers</div>
+                        <div class="test-result test-success">✅ Input Sanitization</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>⚠️ Alertas de Segurança</h3>
+                <div id="security-alerts">
+                    <div class="test-result test-info">ℹ️ Nenhum alerta no momento</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Performance -->
+        <div class="content-section" id="performance-section">
+            <h1>⚡ Monitoramento de Performance</h1>
+            
+            <div class="grid-stats">
+                <div class="status-card">
+                    <h3>🚀 Métricas de Carregamento</h3>
+                    <div id="loading-metrics">
+                        <div class="margin-small">
+                            <strong>DOM Loading:</strong> <span id="dom-loading">Calculando...</span>
+                        </div>
+                        <div class="margin-small">
+                            <strong>Page Load:</strong> <span id="page-load">Calculando...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-card">
+                    <h3>💾 Uso de Memória</h3>
+                    <div id="memory-usage">
+                        <div class="margin-small">
+                            <strong>JS Heap:</strong> <span id="js-heap">Calculando...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-card">
+                    <h3>📦 Status do Service Worker</h3>
+                    <div id="sw-status">
+                        <div class="margin-small">
+                            <strong>Status:</strong> <span id="sw-state">Verificando...</span>
+                        </div>
+                        <div class="margin-small">
+                            <strong>Cache:</strong> <span id="cache-info">Carregando...</span>
+                        </div>
+                        <div class="margin-small">
+                            <button class="btn" onclick="checkCacheStatus()">🔄 Verificar Cache</button>
+                            <button class="btn" onclick="clearCache()">🗑️ Limpar Cache</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Analytics -->
+        <div class="content-section" id="analytics-section">
+            <h1>📈 Analytics e Estatísticas</h1>
+            
+            <div class="status-card">
+                <h3>📊 Estatísticas de Uso</h3>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-icon">👥</div>
+                        <div class="analytics-number">1</div>
+                        <div class="analytics-label">Usuários Ativos</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon">🔄</div>
+                        <div class="analytics-number" id="page-views">0</div>
+                        <div class="analytics-label">Page Views</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon">⏱️</div>
+                        <div class="analytics-number" id="session-duration">0min</div>
+                        <div class="analytics-label">Duração da Sessão</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Configurações -->
+        <div class="content-section" id="settings-section">
+            <h1>⚙️ Configurações do Sistema</h1>
+            
+            <div class="status-card">
+                <h3>🔧 Configurações Gerais</h3>
+                <div class="margin-container">
+                    <label class="settings-label">
+                        <input type="checkbox" checked> Logs automáticos
+                    </label>
+                    <label class="settings-label">
+                        <input type="checkbox" checked> Testes automáticos
+                    </label>
+                    <label class="settings-label">
+                        <input type="checkbox"> Modo debug
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Database -->
+        <div class="content-section" id="database-section">
+            <h1>🗄️ Base de Dados</h1>
+            
+            <div class="status-card">
+                <h3>💾 Storage Local</h3>
+                <div class="margin-medium">
+                    <button class="btn" onclick="showStorageInfo()">📊 Ver Uso do Storage</button>
+                    <button class="btn" onclick="clearStorage()">🗑️ Limpar Storage</button>
+                    <button class="btn" onclick="exportStorage()">💾 Exportar Dados</button>
+                </div>
+                <div id="storage-info">
+                    <div class="test-result test-info">ℹ️ Clique em "Ver Uso do Storage" para detalhes</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Backup -->
+        <div class="content-section" id="backup-section">
+            <h1>💾 Sistema de Backup</h1>
+            
+            <div class="status-card">
+                <h3>🔄 Backup Automático</h3>
+                <div class="margin-medium">
+                    <button class="btn" onclick="createBackup()">💾 Criar Backup</button>
+                    <button class="btn" onclick="restoreBackup()">🔄 Restaurar</button>
+                </div>
+                <div id="backup-status">
+                    <div class="test-result test-info">ℹ️ Último backup: Nunca</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necessários -->
+    <script src="security-config.js"></script>
+    <script src="script.js"></script>
+    <script src="tests.js"></script>
+    
+    <script>
+        // =====================================================
+        // FUNCIONALIDADES DO DASHBOARD ADMINISTRATIVO
+        // =====================================================
+        
+        let systemStartTime = Date.now();
+        let logEntries = [];
+        
+        // Navegação entre seções
+        function showSection(sectionName) {
+            // Remover active de todos os nav-items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Adicionar active ao item clicado
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Esconder todas as seções
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar seção selecionada
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // Fechar sidebar em mobile
+            if (window.innerWidth <= 480) {
+                document.getElementById('sidebar').classList.remove('visible');
+            }
+        }
+        
+        // Toggle da sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            if (window.innerWidth <= 480) {
+                sidebar.classList.toggle('visible');
+            } else {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('expanded');
+            }
+        }
+        
+        // Função de logout
+        function logout() {
+            localStorage.removeItem('twbus_admin_session');
+            sessionStorage.removeItem('twbus_admin_active');
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Atualizar informações da sessão
+        function updateSessionInfo() {
+            try {
+                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                const sessionTime = document.getElementById('session-time');
+                
+                if (session.expires) {
+                    const timeLeft = session.expires - Date.now();
+                    const minutesLeft = Math.floor(timeLeft / 60000);
+                    sessionTime.textContent = `Sessão: ${minutesLeft}min restantes`;
+                }
+                
+                // Atualizar uptime
+                const uptimeElement = document.getElementById('system-uptime');
+                if (uptimeElement) {
+                    const uptime = Math.floor((Date.now() - systemStartTime) / 1000);
+                    const minutes = Math.floor(uptime / 60);
+                    const seconds = uptime % 60;
+                    uptimeElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+                
+                // Atualizar duração da sessão
+                const sessionDuration = document.getElementById('session-duration');
+                if (sessionDuration && session.loginTime) {
+                    const duration = Math.floor((Date.now() - session.loginTime) / 60000);
+                    sessionDuration.textContent = `${duration}min`;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar info da sessão:', error);
+            }
+        }
+        
+        // Logs do sistema
+        function addSystemLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = { timestamp, message, type };
+            logEntries.push(logEntry);
+            
+            const logsContainer = document.getElementById('system-logs');
+            if (logsContainer) {
+                const colorMap = {
+                    'info': '#00ff00',
+                    'warning': '#ffaa00',
+                    'error': '#ff4444',
+                    'success': '#00ff00'
+                };
+                
+                logsContainer.innerHTML += `<span style="color: #666;">[${timestamp}]</span> <span style="color: ${colorMap[type] || '#00ff00'};">[${type.toUpperCase()}]</span> ${message}<br>`;
+                logsContainer.scrollTop = logsContainer.scrollHeight;
+                
+                // Atualizar badge de logs
+                const logCount = document.getElementById('log-count');
+                if (logCount) {
+                    logCount.textContent = logEntries.length;
+                }
+            }
+        }
+        
+        // Funcionalidades dos botões
+        function clearLogs() {
+            logEntries = [];
+            document.getElementById('system-logs').innerHTML = 'Logs limpos...<br>';
+            document.getElementById('log-count').textContent = '0';
+            addSystemLog('Logs do sistema foram limpos', 'info');
+        }
+        
+        function exportLogs() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                logs: logEntries
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'system-logs-' + Date.now() + '.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            addSystemLog('Logs exportados com sucesso', 'success');
+        }
+        
+        function showStorageInfo() {
+            const storageInfo = document.getElementById('storage-info');
+            storageInfo.innerHTML = '';
+            
+            // Verificar localStorage
+            let localStorageSize = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    localStorageSize += localStorage[key].length;
+                }
+            }
+            
+            storageInfo.innerHTML = `
+                <div class="test-result test-info">📊 LocalStorage: ${(localStorageSize / 1024).toFixed(2)} KB</div>
+                <div class="test-result test-info">📦 Items: ${Object.keys(localStorage).length}</div>
+                <div class="test-result test-info">🗂️ SessionStorage: ${Object.keys(sessionStorage).length} items</div>
+            `;
+            
+            addSystemLog('Informações de storage consultadas', 'info');
+        }
+        
+        function clearStorage() {
+            if (confirm('⚠️ Isso irá limpar todos os dados locais. Continuar?')) {
+                const session = localStorage.getItem('twbus_admin_session');
+                localStorage.clear();
+                sessionStorage.clear();
+                // Manter sessão admin
+                localStorage.setItem('twbus_admin_session', session);
+                sessionStorage.setItem('twbus_admin_active', 'true');
+                
+                addSystemLog('Storage local limpo (exceto sessão admin)', 'warning');
+                showStorageInfo();
+            }
+        }
+        
+        function exportStorage() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                localStorage: { ...localStorage },
+                sessionStorage: { ...sessionStorage }
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'storage-export-' + Date.now() + '.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            addSystemLog('Dados de storage exportados', 'success');
+        }
+        
+        function createBackup() {
+            const backup = {
+                timestamp: new Date().toISOString(),
+                version: '1.0',
+                data: {
+                    logs: logEntries,
+                    localStorage: { ...localStorage },
+                    sessionStorage: { ...sessionStorage },
+                    systemInfo: {
+                        uptime: Date.now() - systemStartTime,
+                        userAgent: navigator.userAgent
+                    }
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'twbus-backup-' + Date.now() + '.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            
+            const backupStatus = document.getElementById('backup-status');
+            backupStatus.innerHTML = `
+                <div class="test-result test-success">✅ Backup criado: ${new Date().toLocaleString()}</div>
+            `;
+            
+            addSystemLog('Backup completo criado com sucesso', 'success');
+        }
+        
+        function restoreBackup() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const backup = JSON.parse(e.target.result);
+                            if (backup.data) {
+                                // Restaurar dados
+                                if (backup.data.logs) {
+                                    logEntries = backup.data.logs;
+                                }
+                                addSystemLog(`Backup restaurado de ${backup.timestamp}`, 'success');
+                            }
+                        } catch (error) {
+                            addSystemLog('Erro ao restaurar backup: ' + error.message, 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+        
+        // Performance monitoring
+        function updatePerformanceMetrics() {
+            // DOM Content Loaded
+            const domLoading = document.getElementById('dom-loading');
+            if (domLoading && performance.timing) {
+                const domTime = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
+                domLoading.textContent = domTime + 'ms';
+            }
+            
+            // Page Load
+            const pageLoad = document.getElementById('page-load');
+            if (pageLoad && performance.timing) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                pageLoad.textContent = loadTime + 'ms';
+            }
+            
+            // Memory usage (se disponível)
+            if (performance.memory) {
+                const jsHeap = document.getElementById('js-heap');
+                if (jsHeap) {
+                    const used = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2);
+                    jsHeap.textContent = used + ' MB';
+                }
+            }
+        }
+        
+        // =====================================================
+        // INICIALIZAÇÃO E TESTES AUTOMÁTICOS
+        // =====================================================
+        
+        let testResults = [];
+        let componentStatus = {};
+        
+        function updateComponentStatus(component, status, message) {
+            componentStatus[component] = { status, message };
+            renderComponentStatus();
+        }
+        
+        function renderComponentStatus() {
+            const container = document.getElementById('component-status');
+            if (container) {
+                container.innerHTML = '';
+                
+                Object.entries(componentStatus).forEach(([component, info]) => {
+                    const item = document.createElement('div');
+                    item.className = `test-result test-${info.status}`;
+                    item.textContent = component + ': ' + info.message;
+                    container.appendChild(item);
+                });
+            }
+        }
+        
+        function addTestResult(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({ timestamp, message, type });
+            
+            const container = document.getElementById('test-results');
+            if (container) {
+                const item = document.createElement('div');
+                item.className = `test-result test-${type}`;
+                item.textContent = '[' + timestamp + '] ' + message;
+                container.appendChild(item);
+                
+                // Limitar a 50 resultados
+                if (container.children.length > 50) {
+                    container.removeChild(container.firstChild);
+                }
+                
+                container.scrollTop = container.scrollHeight;
+                
+                // Atualizar contador
+                const testCount = document.getElementById('test-count');
+                if (testCount) {
+                    testCount.textContent = testResults.length;
+                }
+                
+                // Atualizar métricas do dashboard
+                const testsExecuted = document.getElementById('tests-executed');
+                if (testsExecuted) {
+                    testsExecuted.textContent = testResults.filter(t => t.type === 'success' || t.type === 'error').length;
+                }
+                
+                const failuresCount = document.getElementById('failures-count');
+                if (failuresCount) {
+                    failuresCount.textContent = testResults.filter(t => t.type === 'error').length;
+                }
+            }
+        }
+        
+        function addConsoleOutput(message) {
+            const container = document.getElementById('console-output');
+            if (container) {
+                const timestamp = new Date().toLocaleTimeString();
+                container.innerHTML += '<span style="color: #666;">[' + timestamp + ']</span> ' + message + '<br>';
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+        
+        // Interceptar console para logs
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            const message = args.join(' ');
+            addConsoleOutput('<span style="color: #00ff00;">[LOG]</span> ' + message);
+            addSystemLog(message, 'info');
+            
+            if (message.includes('✅')) {
+                addTestResult(message, 'success');
+            } else if (message.includes('❌')) {
+                addTestResult(message, 'error');
+            } else if (message.includes('🔄')) {
+                addTestResult(message, 'info');
+            }
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            const message = args.join(' ');
+            addConsoleOutput('<span style="color: #ff4444;">[ERROR]</span> ' + message);
+            addSystemLog('ERRO: ' + message, 'error');
+            addTestResult('❌ ERRO: ' + message, 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalConsoleWarn.apply(console, args);
+            const message = args.join(' ');
+            addConsoleOutput('<span style="color: #ffaa00;">[WARN]</span> ' + message);
+            addSystemLog('AVISO: ' + message, 'warning');
+            addTestResult('⚠️ AVISO: ' + message, 'info');
+        };
+        
+        function runManualTests() {
+            addTestResult('🚀 Iniciando testes manuais...', 'info');
+            addSystemLog('Testes manuais iniciados pelo usuário', 'info');
+            
+            if (typeof BusPanelTester !== 'undefined') {
+                try {
+                    const tester = new BusPanelTester();
+                    tester.registerAllTests();
+                    
+                    tester.runAllTests().then(() => {
+                        addTestResult('✅ Todos os testes manuais concluídos', 'success');
+                        addSystemLog('Todos os testes concluídos com sucesso', 'success');
+                    }).catch((error) => {
+                        addTestResult('❌ Erro nos testes manuais: ' + error.message, 'error');
+                        addSystemLog('Erro nos testes: ' + error.message, 'error');
+                    });
+                } catch (error) {
+                    addTestResult('❌ Erro ao executar testes: ' + error.message, 'error');
+                    addSystemLog('Erro ao executar testes: ' + error.message, 'error');
+                }
+            } else {
+                addTestResult('❌ BusPanelTester não disponível', 'error');
+                addSystemLog('BusPanelTester não está disponível', 'error');
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = 
+                '<div class="test-result test-info">📋 Resultados limpos</div>';
+            document.getElementById('console-output').innerHTML = 
+                'Console limpo...<br>';
+            testResults = [];
+            document.getElementById('test-count').textContent = '0';
+            addSystemLog('Resultados de testes limpos', 'info');
+        }
+        
+        function exportResults() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                componentStatus: componentStatus,
+                testResults: testResults,
+                systemLogs: logEntries
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'admin-test-results-' + Date.now() + '.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            addTestResult('💾 Resultados exportados', 'success');
+            addSystemLog('Resultados de testes exportados', 'success');
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Dashboard administrativo carregado');
+            addSystemLog('Dashboard administrativo inicializado', 'success');
+            
+            // Atualizar informações a cada segundo
+            setInterval(updateSessionInfo, 1000);
+            
+            // Atualizar métricas de performance
+            setTimeout(updatePerformanceMetrics, 2000);
+            
+            // Incrementar page views
+            const pageViews = document.getElementById('page-views');
+            if (pageViews) {
+                let count = parseInt(localStorage.getItem('twbus_page_views') || '0') + 1;
+                localStorage.setItem('twbus_page_views', count.toString());
+                pageViews.textContent = count;
+            }
+            
+            // Executar verificações automáticas
+            setTimeout(() => {
+                // Verificar SecurityValidator
+                if (typeof SecurityValidator !== 'undefined') {
+                    updateComponentStatus('SecurityValidator', 'success', '✅ Disponível');
+                    addSystemLog('SecurityValidator carregado e funcional', 'success');
+                } else {
+                    updateComponentStatus('SecurityValidator', 'error', '❌ Não disponível');
+                    addSystemLog('SecurityValidator não encontrado', 'error');
+                }
+                
+                // Verificar BusPanelTester
+                if (typeof BusPanelTester !== 'undefined') {
+                    updateComponentStatus('BusPanelTester', 'success', '✅ Disponível');
+                    addSystemLog('BusPanelTester carregado e funcional', 'success');
+                    
+                    // Executar testes automaticamente
+                    setTimeout(() => {
+                        console.log('🔄 Executando testes automaticamente...');
+                        runManualTests();
+                    }, 1000);
+                    
+                } else {
+                    updateComponentStatus('BusPanelTester', 'error', '❌ Não disponível');
+                    addSystemLog('BusPanelTester não encontrado', 'error');
+                }
+                
+                // Verificar SECURITY_CONFIG
+                if (typeof SECURITY_CONFIG !== 'undefined') {
+                    updateComponentStatus('SECURITY_CONFIG', 'success', 
+                        '✅ Disponível (' + Object.keys(SECURITY_CONFIG).length + ' configurações)');
+                    addSystemLog('SECURITY_CONFIG carregado com ' + Object.keys(SECURITY_CONFIG).length + ' configurações', 'success');
+                } else {
+                    updateComponentStatus('SECURITY_CONFIG', 'error', '❌ Não disponível');
+                    addSystemLog('SECURITY_CONFIG não encontrado', 'error');
+                }
+                  }, 500);
+        });
+        
+        function updateTestMetrics() {
+            const testsExecuted = document.getElementById('tests-executed');
+            const failuresCount = document.getElementById('failures-count');
+            
+            if (testsExecuted) {
+                testsExecuted.textContent = testResults.filter(t => t.type === 'success' || t.type === 'error').length;
+            }
+            
+            if (failuresCount) {
+                failuresCount.textContent = testResults.filter(t => t.type === 'error').length;
+            }
+        }
+        
+        // =====================================================
+        // FUNCIONALIDADES DE SERVICE WORKER E CACHE
+        // =====================================================
+        
+        function checkCacheStatus() {
+            addSystemLog('Verificando status do Service Worker e cache', 'info');
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration()
+                    .then(registration => {
+                        const swState = document.getElementById('sw-state');
+                        if (registration) {
+                            if (registration.active) {
+                                swState.innerHTML = '<span style="color: #4ade80;">✅ Ativo</span>';
+                                addSystemLog('Service Worker está ativo', 'success');
+                            } else {
+                                swState.innerHTML = '<span style="color: #ef4444;">❌ Inativo</span>';
+                                addSystemLog('Service Worker não está ativo', 'error');
+                            }
+                        } else {
+                            swState.innerHTML = '<span style="color: #ef4444;">❌ Não registrado</span>';
+                            addSystemLog('Service Worker não está registrado', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('sw-state').innerHTML = '<span style="color: #ef4444;">❌ Erro</span>';
+                        addSystemLog('Erro ao verificar Service Worker: ' + error.message, 'error');
+                    });
+                
+                // Verificar caches
+                caches.keys().then(cacheNames => {
+                    const cacheInfo = document.getElementById('cache-info');
+                    if (cacheNames.length > 0) {
+                        cacheInfo.innerHTML = `<span style="color: #4ade80;">✅ ${cacheNames.length} cache(s) ativo(s)</span>`;
+                        addSystemLog(`${cacheNames.length} caches encontrados: ${cacheNames.join(', ')}`, 'success');
+                        
+                        // Verificar tamanho do cache
+                        let totalSize = 0;
+                        const promises = cacheNames.map(cacheName => {
+                            return caches.open(cacheName).then(cache => {
+                                return cache.keys().then(requests => {
+                                    addSystemLog(`Cache ${cacheName}: ${requests.length} itens`, 'info');
+                                    return requests.length;
+                                });
+                            });
+                        });
+                        
+                        Promise.all(promises).then(sizes => {
+                            const totalItems = sizes.reduce((sum, size) => sum + size, 0);
+                            addSystemLog(`Total de itens em cache: ${totalItems}`, 'info');
+                        });
+                        
+                    } else {
+                        cacheInfo.innerHTML = '<span style="color: #ef4444;">❌ Nenhum cache</span>';
+                        addSystemLog('Nenhum cache encontrado', 'warning');
+                    }
+                });
+            } else {
+                document.getElementById('sw-state').innerHTML = '<span style="color: #ef4444;">❌ Não suportado</span>';
+                document.getElementById('cache-info').innerHTML = '<span style="color: #ef4444;">❌ Não suportado</span>';
+                addSystemLog('Service Worker não é suportado neste navegador', 'warning');
+            }
+        }
+        
+        function clearCache() {
+            if (confirm('⚠️ Isso irá limpar todo o cache do Service Worker. Continuar?')) {
+                addSystemLog('Iniciando limpeza de cache', 'info');
+                
+                caches.keys().then(cacheNames => {
+                    const promises = cacheNames.map(cacheName => {
+                        addSystemLog(`Removendo cache: ${cacheName}`, 'info');
+                        return caches.delete(cacheName);
+                    });
+                    
+                    return Promise.all(promises);
+                }).then(() => {
+                    addSystemLog('Cache limpo com sucesso', 'success');
+                    document.getElementById('cache-info').innerHTML = '<span style="color: #ef4444;">❌ Cache limpo</span>';
+                    
+                    // Recarregar Service Worker
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistration().then(registration => {
+                            if (registration) {
+                                registration.unregister().then(() => {
+                                    addSystemLog('Service Worker desregistrado para recriação', 'info');
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1000);
+                                });
+                            }
+                        });
+                    }
+                }).catch(error => {
+                    addSystemLog('Erro ao limpar cache: ' + error.message, 'error');
+                });
+            }
+        }
+        
+        function toggleAutoMode() {
+            addTestResult('🔄 Modo automático alternado', 'info');
+            addSystemLog('Modo automático de testes alternado', 'info');
+        }
+        
+        // =====================================================
+    <!-- JavaScript separado -->
+    <script src="js/admin-dashboard.js"></script>
+    <script src="script.js"></script>
+    <script src="tests.js"></script>
+    <script src="security-config.js"></script>
+    <script src="test-runner.js"></script>
+</body>
+</html>

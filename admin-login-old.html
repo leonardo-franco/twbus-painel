@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrativo - Painel TwBus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+        
+        /* Animação de fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"><animate attributeName="opacity" values="0.1;0.2;0.1" dur="4s" repeatCount="indefinite"/></circle><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.1)"><animate attributeName="opacity" values="0.1;0.25;0.1" dur="5s" repeatCount="indefinite"/></circle></svg>') repeat;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-10px) translateX(5px); }
+            50% { transform: translateY(0px) translateX(-5px); }
+            75% { transform: translateY(10px) translateX(5px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            position: relative;
+            z-index: 1;
+        }
+        
+        .title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .form-group label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .security-features {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        
+        .security-item i {
+            margin-right: 8px;
+            color: #4ade80;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fecaca;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .success-message {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #bbf7d0;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+        
+        .back-link i {
+            margin-right: 8px;
+        }
+        
+        /* Responsividade para tablets */
+        @media (max-width: 768px) {
+            .login-container {
+                max-width: 90%;
+                padding: 30px 25px;
+                margin: 15px auto;
+            }
+            
+            .logo {
+                font-size: 2.5rem !important;
+            }
+            
+            .title {
+                font-size: 1.6rem !important;
+            }
+            
+            .subtitle {
+                font-size: 0.95rem !important;
+            }
+            
+            .form-input {
+                padding: 12px 16px !important;
+                font-size: 16px !important;
+            }
+            
+            .login-btn {
+                padding: 12px 25px !important;
+                font-size: 16px !important;
+            }
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .login-container {
+                max-width: 95%;
+                padding: 25px 20px;
+                margin: 10px auto;
+                border-radius: 15px;
+                width: calc(100% - 20px);
+            }
+            
+            .logo {
+                font-size: 2.2rem !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .title {
+                font-size: 1.4rem !important;
+                margin-bottom: 6px !important;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem !important;
+                margin-bottom: 25px !important;
+            }
+            
+            .form-group {
+                margin-bottom: 18px !important;
+            }
+            
+            .form-input {
+                padding: 14px 16px !important;
+                font-size: 16px !important;
+                border-radius: 12px !important;
+            }
+            
+            .login-btn {
+                padding: 14px 30px !important;
+                font-size: 16px !important;
+                border-radius: 12px !important;
+                width: 100%;
+            }
+            
+            .back-to-panel {
+                padding: 10px 20px !important;
+                font-size: 14px !important;
+                margin-top: 15px !important;
+            }
+            
+            .security-features {
+                margin-top: 20px !important;
+                padding-top: 15px !important;
+            }
+            
+            .security-item {
+                font-size: 0.8rem !important;
+                margin-bottom: 6px !important;
+            }
+            
+            .status-message {
+                font-size: 0.9rem !important;
+                padding: 12px !important;
+                border-radius: 10px !important;
+                margin: 15px 0 !important;
+            }
+        }
+
+        /* Responsividade para telas muito pequenas */
+        @media (max-width: 320px) {
+            .login-container {
+                padding: 20px 15px;
+                margin: 5px auto;
+            }
+            
+            .logo {
+                font-size: 2rem !important;
+            }
+            
+            .title {
+                font-size: 1.3rem !important;
+            }
+            
+            .form-input {
+                padding: 12px 14px !important;
+            }
+            
+            .login-btn {
+                padding: 12px 25px !important;
+                font-size: 15px !important;
+            }
+        }
+
+        /* Modo escuro automático */
+        @media (prefers-color-scheme: dark) {
+            .form-input {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .form-input:focus {
+                background: rgba(255, 255, 255, 0.15);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">
+        <i>←</i> Voltar ao Painel
+    </a>
+    
+    <div class="login-container">
+        <div class="logo">🔐</div>
+        <h1 class="title">Acesso Administrativo</h1>
+        <p class="subtitle">Login necessário para acessar ferramentas de teste</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-input" 
+                    placeholder="Digite seu usuário"
+                    autocomplete="username"
+                    required
+                />
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Digite sua senha"
+                    autocomplete="current-password"
+                    required
+                />
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                Fazer Login
+            </button>
+        </form>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        
+        <div class="security-features">
+            <div class="security-item">
+                <i>🛡️</i> Autenticação segura
+            </div>
+            <div class="security-item">
+                <i>🔒</i> Dados criptografados
+            </div>
+            <div class="security-item">
+                <i>⏱️</i> Sessão com timeout
+            </div>
+        </div>
+    </div>
+
+    <script src="security-config.js"></script>
+    <script>
+        // =====================================================
+        // SISTEMA DE LOGIN ADMINISTRATIVO SEGURO
+        // =====================================================
+        
+        class AdminAuth {
+            constructor() {
+                this.maxAttempts = 3;
+                this.lockoutTime = 15 * 60 * 1000; // 15 minutos
+                this.sessionTimeout = 30 * 60 * 1000; // 30 minutos
+                this.initSecurity();
+                this.bindEvents();
+            }
+            
+            initSecurity() {
+                // Verificar se já está logado
+                if (this.isAuthenticated()) {
+                    this.redirectToTests();
+                    return;
+                }
+                
+                // Verificar tentativas de login
+                this.checkLoginAttempts();
+                
+                // Aplicar medidas de segurança
+                this.preventBruteForce();
+                this.setupCSRFProtection();
+            }
+            
+            bindEvents() {
+                const form = document.getElementById('loginForm');
+                const usernameInput = document.getElementById('username');
+                const passwordInput = document.getElementById('password');
+                
+                form.addEventListener('submit', (e) => this.handleLogin(e));
+                
+                // Limpar mensagens ao digitar
+                [usernameInput, passwordInput].forEach(input => {
+                    input.addEventListener('input', () => {
+                        this.clearMessages();
+                    });
+                });
+                
+                // Enter para fazer login
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        form.dispatchEvent(new Event('submit'));
+                    }
+                });
+            }
+            
+            async handleLogin(event) {
+                event.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                
+                if (!this.validateInput(username, password)) {
+                    return;
+                }
+                
+                if (this.isLockedOut()) {
+                    this.showError('Muitas tentativas de login. Tente novamente em 15 minutos.');
+                    return;
+                }
+                
+                this.setLoading(true);
+                
+                try {
+                    // Simular delay de autenticação (segurança)
+                    await this.delay(1500);
+                    
+                    if (await this.authenticate(username, password)) {
+                        this.onLoginSuccess();
+                    } else {
+                        this.onLoginFailure();
+                    }
+                } catch (error) {
+                    this.showError('Erro interno do servidor. Tente novamente.');
+                    console.error('Erro de autenticação:', error);
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+            
+            validateInput(username, password) {
+                if (!username || !password) {
+                    this.showError('Por favor, preencha todos os campos.');
+                    return false;
+                }
+                
+                if (username.length < 3) {
+                    this.showError('Usuário deve ter pelo menos 3 caracteres.');
+                    return false;
+                }
+                
+                if (password.length < 6) {
+                    this.showError('Senha deve ter pelo menos 6 caracteres.');
+                    return false;
+                }
+                
+                // Verificar caracteres perigosos
+                const dangerousChars = /[<>\"'&]/;
+                if (dangerousChars.test(username) || dangerousChars.test(password)) {
+                    this.showError('Caracteres inválidos detectados.');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            async authenticate(username, password) {
+                // Credenciais administrativas (em produção, usar backend seguro)
+                const validCredentials = [
+                    { user: 'admin', pass: await this.hashPassword('admin123') },
+                    { user: 'twbus', pass: await this.hashPassword('twbus2025') },
+                    { user: 'test', pass: await this.hashPassword('test123') }
+                ];
+                
+                const hashedPassword = await this.hashPassword(password);
+                
+                return validCredentials.some(cred => 
+                    cred.user === username && cred.pass === hashedPassword
+                );
+            }
+            
+            async hashPassword(password) {
+                // Hash simples para demonstração (em produção usar bcrypt)
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password + 'twbus_salt_2025');
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+            
+            onLoginSuccess() {
+                this.clearLoginAttempts();
+                this.createSession();
+                this.showSuccess('Login realizado com sucesso! Redirecionando...');
+                
+                setTimeout(() => {
+                    this.redirectToTests();
+                }, 1500);
+            }
+            
+            onLoginFailure() {
+                this.incrementLoginAttempts();
+                const attempts = this.getLoginAttempts();
+                const remaining = this.maxAttempts - attempts;
+                
+                if (remaining > 0) {
+                    this.showError(`Credenciais inválidas. ${remaining} tentativa(s) restante(s).`);
+                } else {
+                    this.lockAccount();
+                    this.showError('Conta bloqueada por 15 minutos devido a muitas tentativas.');
+                }
+            }
+            
+            createSession() {
+                const sessionData = {
+                    authenticated: true,
+                    timestamp: Date.now(),
+                    expires: Date.now() + this.sessionTimeout,
+                    token: this.generateSessionToken()
+                };
+                
+                localStorage.setItem('twbus_admin_session', JSON.stringify(sessionData));
+                sessionStorage.setItem('twbus_admin_active', 'true');
+            }
+            
+            generateSessionToken() {
+                return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+            }
+            
+            isAuthenticated() {
+                try {
+                    const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                    const isActive = sessionStorage.getItem('twbus_admin_active') === 'true';
+                    
+                    return session.authenticated && 
+                           session.expires > Date.now() && 
+                           isActive &&
+                           session.token;
+                } catch {
+                    return false;
+                }
+            }
+            
+            redirectToTests() {                        window.location.href = 'admin-dashboard.html';
+            }
+            
+            // Controle de tentativas de login
+            getLoginAttempts() {
+                const attempts = localStorage.getItem('twbus_login_attempts');
+                return attempts ? parseInt(attempts) : 0;
+            }
+            
+            incrementLoginAttempts() {
+                const attempts = this.getLoginAttempts() + 1;
+                localStorage.setItem('twbus_login_attempts', attempts.toString());
+                localStorage.setItem('twbus_last_attempt', Date.now().toString());
+            }
+            
+            clearLoginAttempts() {
+                localStorage.removeItem('twbus_login_attempts');
+                localStorage.removeItem('twbus_last_attempt');
+                localStorage.removeItem('twbus_lockout');
+            }
+            
+            isLockedOut() {
+                const lockout = localStorage.getItem('twbus_lockout');
+                if (!lockout) return false;
+                
+                const lockoutTime = parseInt(lockout);
+                return Date.now() < lockoutTime;
+            }
+            
+            lockAccount() {
+                const lockoutUntil = Date.now() + this.lockoutTime;
+                localStorage.setItem('twbus_lockout', lockoutUntil.toString());
+            }
+            
+            checkLoginAttempts() {
+                const attempts = this.getLoginAttempts();
+                if (attempts >= this.maxAttempts) {
+                    const lastAttempt = localStorage.getItem('twbus_last_attempt');
+                    if (lastAttempt && (Date.now() - parseInt(lastAttempt)) < this.lockoutTime) {
+                        this.lockAccount();
+                    } else {
+                        this.clearLoginAttempts();
+                    }
+                }
+            }
+            
+            preventBruteForce() {
+                let requestCount = 0;
+                const resetTime = 60000; // 1 minuto
+                
+                setInterval(() => {
+                    requestCount = 0;
+                }, resetTime);
+                
+                // Monitorar tentativas rápidas
+                document.getElementById('loginForm').addEventListener('submit', () => {
+                    requestCount++;
+                    if (requestCount > 5) {
+                        this.showError('Muitas tentativas muito rápidas. Aguarde um momento.');
+                        this.setLoading(true);
+                        setTimeout(() => this.setLoading(false), 3000);
+                    }
+                });
+            }
+            
+            setupCSRFProtection() {
+                // Token CSRF simples
+                const token = this.generateSessionToken();
+                document.getElementById('loginForm').insertAdjacentHTML('beforeend',
+                    `<input type="hidden" name="csrf_token" value="${token}">`
+                );
+            }
+            
+            // Utilitários
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            
+            setLoading(loading) {
+                const btn = document.getElementById('loginBtn');
+                const form = document.getElementById('loginForm');
+                
+                if (loading) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="loading"></span>Autenticando...';
+                    form.style.pointerEvents = 'none';
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Fazer Login';
+                    form.style.pointerEvents = 'auto';
+                }
+            }
+            
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                const successDiv = document.getElementById('successMessage');
+                
+                successDiv.style.display = 'none';
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                
+                // Auto-limpar após 5 segundos
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+            
+            showSuccess(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                const successDiv = document.getElementById('successMessage');
+                
+                errorDiv.style.display = 'none';
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+            }
+            
+            clearMessages() {
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'none';
+            }
+        }
+        
+        // Inicializar sistema de autenticação
+        document.addEventListener('DOMContentLoaded', () => {
+            new AdminAuth();
+        });
+        
+        // Logout automático ao fechar aba/navegador
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.removeItem('twbus_admin_active');
+        });
+        
+        console.log('🔐 Sistema de login administrativo carregado');
+    </script>
+</body>
+</html>
