@@ -1,15 +1,20 @@
-// TwBus Service Worker
-// Implementa cache e funcionalidade offline
+// TwBus Service Worker v1.1.1
+// Implementa cache inteligente e funcionalidade offline
 
-const CACHE_NAME = 'twbus-v1.0.0';
+const CACHE_NAME = 'twbus-v1.1.1';
 const CACHE_URLS = [
   '/',
   '/index.html',
+  '/admin-login.html',
+  '/admin-dashboard.html',
   '/style.css',
   '/script.js',
-  '/tests.html',
+  '/security-config.js',
   '/tests.js',
+  '/version.js',
   '/manifest.json',
+  '/icon.svg',
+  '/icon-512.svg',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];
 
@@ -56,44 +61,73 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Interceptação de requisições
+// Interceptação de requisições com cache inteligente
 self.addEventListener('fetch', event => {
-  // Skip cross-origin requests
+  // Skip cross-origin requests (exceto CDNs permitidos)
   if (!event.request.url.startsWith(self.location.origin) && 
       !event.request.url.includes('cdnjs.cloudflare.com')) {
     return;
   }
 
+  // Cache-first strategy para recursos estáticos
+  if (event.request.url.includes('.css') || 
+      event.request.url.includes('.js') || 
+      event.request.url.includes('.svg') ||
+      event.request.url.includes('manifest.json')) {
+    
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          if (response) {
+            console.log('📦 Service Worker: Servindo do cache (estático):', event.request.url);
+            return response;
+          }
+          
+          return fetch(event.request)
+            .then(response => {
+              if (response && response.status === 200) {
+                const responseToCache = response.clone();
+                caches.open(CACHE_NAME)
+                  .then(cache => {
+                    cache.put(event.request, responseToCache);
+                    console.log('💾 Service Worker: Recurso estático cacheado:', event.request.url);
+                  });
+              }
+              return response;
+            });
+        })
+    );
+    return;
+  }
+
+  // Network-first strategy para páginas HTML (sempre buscar versão mais recente)
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Retorna do cache se disponível
-        if (response) {
-          console.log('📦 Service Worker: Servindo do cache:', event.request.url);
+        if (response && response.status === 200) {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(event.request, responseToCache);
+              console.log('💾 Service Worker: Página HTML atualizada no cache:', event.request.url);
+            });
+          
+          console.log('🌐 Service Worker: Servindo da rede (HTML):', event.request.url);
           return response;
         }
-
-        // Tenta buscar da rede
-        return fetch(event.request)
+        
+        // Se falhar, tenta do cache
+        return caches.match(event.request);
+      })
+      .catch(error => {
+        console.log('🔌 Service Worker: Offline, servindo do cache:', event.request.url);
+        
+        return caches.match(event.request)
           .then(response => {
-            // Verifica se a resposta é válida
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if (response) {
+              console.log('📦 Service Worker: Servindo do cache (offline):', event.request.url);
               return response;
             }
-
-            // Clona a resposta para o cache
-            const responseToCache = response.clone();
-            
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-                console.log('💾 Service Worker: Adicionado ao cache:', event.request.url);
-              });
-
-            return response;
-          })
-          .catch(error => {
-            console.log('🔌 Service Worker: Offline, servindo fallback');
             
             // Fallback para HTML pages
             if (event.request.destination === 'document') {

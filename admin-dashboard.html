@@ -610,6 +610,22 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="status-card">
+                    <h3>📦 Status do Service Worker</h3>
+                    <div id="sw-status">
+                        <div style="margin: 10px 0;">
+                            <strong>Status:</strong> <span id="sw-state">Verificando...</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <strong>Cache:</strong> <span id="cache-info">Carregando...</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <button class="btn" onclick="checkCacheStatus()">🔄 Verificar Cache</button>
+                            <button class="btn" onclick="clearCache()">🗑️ Limpar Cache</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1215,10 +1231,119 @@
             }
         }
         
+        // =====================================================
+        // FUNCIONALIDADES DE SERVICE WORKER E CACHE
+        // =====================================================
+        
+        function checkCacheStatus() {
+            addSystemLog('Verificando status do Service Worker e cache', 'info');
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration()
+                    .then(registration => {
+                        const swState = document.getElementById('sw-state');
+                        if (registration) {
+                            if (registration.active) {
+                                swState.innerHTML = '<span style="color: #4ade80;">✅ Ativo</span>';
+                                addSystemLog('Service Worker está ativo', 'success');
+                            } else {
+                                swState.innerHTML = '<span style="color: #ef4444;">❌ Inativo</span>';
+                                addSystemLog('Service Worker não está ativo', 'error');
+                            }
+                        } else {
+                            swState.innerHTML = '<span style="color: #ef4444;">❌ Não registrado</span>';
+                            addSystemLog('Service Worker não está registrado', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('sw-state').innerHTML = '<span style="color: #ef4444;">❌ Erro</span>';
+                        addSystemLog('Erro ao verificar Service Worker: ' + error.message, 'error');
+                    });
+                
+                // Verificar caches
+                caches.keys().then(cacheNames => {
+                    const cacheInfo = document.getElementById('cache-info');
+                    if (cacheNames.length > 0) {
+                        cacheInfo.innerHTML = `<span style="color: #4ade80;">✅ ${cacheNames.length} cache(s) ativo(s)</span>`;
+                        addSystemLog(`${cacheNames.length} caches encontrados: ${cacheNames.join(', ')}`, 'success');
+                        
+                        // Verificar tamanho do cache
+                        let totalSize = 0;
+                        const promises = cacheNames.map(cacheName => {
+                            return caches.open(cacheName).then(cache => {
+                                return cache.keys().then(requests => {
+                                    addSystemLog(`Cache ${cacheName}: ${requests.length} itens`, 'info');
+                                    return requests.length;
+                                });
+                            });
+                        });
+                        
+                        Promise.all(promises).then(sizes => {
+                            const totalItems = sizes.reduce((sum, size) => sum + size, 0);
+                            addSystemLog(`Total de itens em cache: ${totalItems}`, 'info');
+                        });
+                        
+                    } else {
+                        cacheInfo.innerHTML = '<span style="color: #ef4444;">❌ Nenhum cache</span>';
+                        addSystemLog('Nenhum cache encontrado', 'warning');
+                    }
+                });
+            } else {
+                document.getElementById('sw-state').innerHTML = '<span style="color: #ef4444;">❌ Não suportado</span>';
+                document.getElementById('cache-info').innerHTML = '<span style="color: #ef4444;">❌ Não suportado</span>';
+                addSystemLog('Service Worker não é suportado neste navegador', 'warning');
+            }
+        }
+        
+        function clearCache() {
+            if (confirm('⚠️ Isso irá limpar todo o cache do Service Worker. Continuar?')) {
+                addSystemLog('Iniciando limpeza de cache', 'info');
+                
+                caches.keys().then(cacheNames => {
+                    const promises = cacheNames.map(cacheName => {
+                        addSystemLog(`Removendo cache: ${cacheName}`, 'info');
+                        return caches.delete(cacheName);
+                    });
+                    
+                    return Promise.all(promises);
+                }).then(() => {
+                    addSystemLog('Cache limpo com sucesso', 'success');
+                    document.getElementById('cache-info').innerHTML = '<span style="color: #ef4444;">❌ Cache limpo</span>';
+                    
+                    // Recarregar Service Worker
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistration().then(registration => {
+                            if (registration) {
+                                registration.unregister().then(() => {
+                                    addSystemLog('Service Worker desregistrado para recriação', 'info');
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1000);
+                                });
+                            }
+                        });
+                    }
+                }).catch(error => {
+                    addSystemLog('Erro ao limpar cache: ' + error.message, 'error');
+                });
+            }
+        }
+        
         function toggleAutoMode() {
             addTestResult('🔄 Modo automático alternado', 'info');
             addSystemLog('Modo automático de testes alternado', 'info');
         }
+        
+        // =====================================================
+        // INICIALIZAÇÃO COM VERIFICAÇÃO DE SERVICE WORKER
+        // =====================================================
+        
+        // Verificar Service Worker automaticamente ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                checkCacheStatus();
+            }, 2000);
+        });
         
         console.log('📋 Dashboard administrativo v1.1.1 carregado com sucesso');
         </script>

@@ -279,27 +279,37 @@
         let installBannerBtn = document.getElementById('installBannerBtn');
         let dismissBannerBtn = document.getElementById('dismissBannerBtn');
 
-        // Service Worker Registration
+        // Service Worker Registration v1.1.1
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
                         console.log('✅ Service Worker registrado:', registration.scope);
+                        console.log('📦 Cache: twbus-v1.1.1 ativo');
                         
                         // Check for updates
                         registration.addEventListener('updatefound', () => {
+                            console.log('🔄 Service Worker: Nova versão detectada');
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('⬆️ Service Worker: Atualização disponível');
                                     showUpdateAvailable();
                                 }
                             });
+                        });
+                        
+                        // Log cache status
+                        caches.keys().then(cacheNames => {
+                            console.log('📂 Caches disponíveis:', cacheNames);
                         });
                     })
                     .catch(error => {
                         console.error('❌ Service Worker falhou:', error);
                     });
             });
+        } else {
+            console.warn('⚠️ Service Worker não suportado neste navegador');
         }
 
         // PWA Install Prompt
