@@ -7,38 +7,9 @@
     <meta name="keywords" content="ônibus, transporte público, parada, tempo real, São Paulo">
     <meta name="author" content="TwBus">
     
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#764ba2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="TwBus">
-    <meta name="msapplication-TileColor" content="#667eea">
-    <meta name="msapplication-navbutton-color" content="#764ba2">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="TwBus - Painel de Parada de Ônibus">
-    <meta property="og:description" content="Acompanhe informações de ônibus em tempo real">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://twbus.vercel.app">
-    <meta property="og:image" content="https://twbus.vercel.app/icon-512.png">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="TwBus - Painel de Parada">
-    <meta name="twitter:description" content="Acompanhe informações de ônibus em tempo real">
-    <meta name="twitter:image" content="https://twbus.vercel.app/icon-512.png">
-    
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Favicons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-    <link rel="apple-touch-icon" href="icon-192.png">
     
     <title>TwBus - Painel de Parada</title>
 </head>
@@ -233,30 +204,22 @@
                 <i class="fas fa-sync-alt"></i>
                 <span>Atualizado: 14:32</span>
             </div>
-            <button id="installBtn" class="install-btn" style="display: none;">
-                <i class="fas fa-download"></i>
-                <span>Instalar App</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- PWA Installation Banner -->
-    <div id="installBanner" class="install-banner" style="display: none;">
-        <div class="banner-content">
-            <div class="banner-text">
-                <h4>📱 Instalar TwBus</h4>
-                <p>Adicione à tela inicial para acesso rápido</p>
-            </div>
-            <div class="banner-actions">
-                <button id="installBannerBtn" class="btn-install">Instalar</button>
-                <button id="dismissBannerBtn" class="btn-dismiss">Agora não</button>
-            </div>
         </div>
     </div>
 
     <script src="script.js"></script>
     <script>
-        // PWA Installation Logic
+        // Inicialização do painel
+        try {
+            window.busPanel = new BusPanel();
+            console.log('✅ Painel TwBus inicializado com sucesso');
+        } catch (error) {
+            console.error('❌ Erro ao inicializar painel:', error);
+            document.body.classList.add('error-state');
+        }
+    </script>
+</body>
+</html>
         let deferredPrompt;
         let installBtn = document.getElementById('installBtn');
         let installBanner = document.getElementById('installBanner');
