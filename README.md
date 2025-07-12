@@ -340,3 +340,19 @@ O painel TwBus agora é:
 - ✅ **Profissional**: Código limpo e bem estruturado
 
 **Pronto para produção!** 🎉
+
+## 🌐 **Deploy Realizado com Sucesso!**
+
+### 🚀 **URLs do Projeto:**
+- **Produção:** [https://twbus.vercel.app](https://twbus.vercel.app)
+- **URL Técnica:** [https://twbus-n52krwd4k-lleozzxs-projects.vercel.app](https://twbus-n52krwd4k-lleozzxs-projects.vercel.app)
+- **Dashboard Vercel:** [https://vercel.com/lleozzxs-projects/twbus](https://vercel.com/lleozzxs-projects/twbus)
+
+### ✅ **Status do Deploy:**
+- **Status:** ✅ Ativo e funcionando
+- **Data:** 12 de julho de 2025
+- **Tempo de Build:** ~22ms
+- **CDN:** Global (Vercel Edge Network)
+- **HTTPS:** Ativo com certificado automático
+
+### 📱 **Como Instalar o PWA:**
