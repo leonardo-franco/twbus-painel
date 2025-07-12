@@ -1,23 +1,63 @@
-# 🚌 TwBus - Painel Digital de Parada
+# 🚌 TwBus - Painel de Ônibus Inteligente
 
-Um painel digital moderno para paradas de ônibus, inspirado nos displays de aeroportos, agora como Progressive Web App (PWA).
+Sistema completo para painel informativo de parada de ônibus com dashboard administrativo avançado.
 
-## ✨ Características
+## 🎯 Funcionalidades
 
-### 🎨 Design Moderno
-- Interface glassmorphism com gradientes suaves
-- Totalmente responsivo (mobile-first)
-- Animações fluidas e microinterações
-- Tema escuro otimizado para legibilidade
+### 📊 Painel Principal
+- Interface glassmorphism moderna e responsiva
+- Informações de chegada de ônibus em tempo real
+- Condições climáticas atuais
+- Notícias e alertas do transporte público
+- Design otimizado para telas de totem
 
-### 📱 PWA Completo
-- Instalável em dispositivos móveis e desktop
-- Funciona offline com Service Worker
-- Ícones e splash screens personalizados
-- Experiência nativa de aplicativo
+### 🔒 Sistema Administrativo
+- **Login seguro** com múltiplos usuários
+- **Dashboard completo** com métricas em tempo real
+- **Testes automáticos** integrados
+- **Logs do sistema** com exportação
+- **Monitoramento de segurança** avançado
+- **Analytics e performance** detalhados
+- **Sistema de backup** completo
+- **Gerenciamento de storage** local
 
-### 🔒 Segurança e Performance
-- Validação rigorosa de entrada (anti-XSS)
+## 🛡️ Segurança
+
+- Autenticação SHA-256 com sessões protegidas
+- XSS Protection e Input Sanitization
+- Content Security Policy (CSP) rigoroso
+- Rate limiting para prevenção de ataques
+- HTTPS obrigatório com headers de segurança
+
+## 🧪 Testes Automáticos
+
+- **20+ testes** de componentes e funcionalidades
+- Verificação automática de segurança
+- Monitoramento de performance
+- Relatórios exportáveis em JSON
+
+## 🚀 Deploy
+
+**URL de Produção:** https://twbus.vercel.app
+
+### Acesso Público:
+- **Painel Principal:** https://twbus.vercel.app
+
+### Acesso Administrativo:
+- **Login:** https://twbus.vercel.app/admin-login.html
+- **Dashboard:** https://twbus.vercel.app/admin-dashboard.html
+
+### Credenciais de Teste:
+- **admin / admin123**
+- **manager / manager456**  
+- **operator / operator789**
+
+## �️ Tecnologias
+
+- **Frontend:** HTML5, CSS3 (Glassmorphism), JavaScript ES6+
+- **Segurança:** SecurityValidator, AdminAuth, CSRF Protection
+- **Deploy:** Vercel com CDN global
+- **Teste:** BusPanelTester (framework próprio)
 - Proteção contra travamentos
 - Gestão eficiente de memória
 - Sem atualizações automáticas (dados fixos)
