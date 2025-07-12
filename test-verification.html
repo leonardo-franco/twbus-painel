@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Verificação de Testes Automáticos - Painel de Ônibus</title>
     <style>
         body {
@@ -89,6 +89,178 @@
             background: rgba(79, 70, 229, 1);
             transform: translateY(-2px);
         }
+
+        /* Responsividade para tablets */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 0 auto;
+            }
+            
+            h1 {
+                font-size: 1.7rem !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .admin-header {
+                padding: 12px 15px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .admin-header h3 {
+                font-size: 1rem !important;
+            }
+            
+            .admin-header p {
+                font-size: 0.85rem !important;
+            }
+            
+            .status-card {
+                padding: 15px !important;
+                margin: 15px 0 !important;
+            }
+            
+            .test-result {
+                font-size: 13px !important;
+                padding: 6px 10px !important;
+            }
+            
+            .console-output {
+                font-size: 11px !important;
+                padding: 12px !important;
+                max-height: 250px !important;
+            }
+            
+            .btn {
+                padding: 10px 18px !important;
+                font-size: 13px !important;
+                margin: 3px !important;
+            }
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+                border-radius: 15px;
+                margin: 0;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .admin-header {
+                padding: 10px 12px !important;
+                margin-bottom: 12px !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+            
+            .admin-header .logout-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .admin-header button {
+                padding: 8px 16px !important;
+                font-size: 0.85rem !important;
+                border-radius: 8px !important;
+            }
+            
+            .admin-header h3 {
+                font-size: 0.95rem !important;
+                margin: 0 !important;
+            }
+            
+            .admin-header p {
+                font-size: 0.8rem !important;
+                margin: 0 !important;
+            }
+            
+            .session-info {
+                font-size: 0.8rem !important;
+                text-align: left !important;
+            }
+            
+            .status-card {
+                padding: 12px !important;
+                margin: 12px 0 !important;
+                border-radius: 10px !important;
+            }
+            
+            .test-result {
+                font-size: 12px !important;
+                padding: 5px 8px !important;
+                margin: 3px 0 !important;
+            }
+            
+            .console-output {
+                font-size: 10px !important;
+                padding: 10px !important;
+                max-height: 200px !important;
+                border-radius: 6px !important;
+            }
+            
+            .btn {
+                padding: 8px 15px !important;
+                font-size: 12px !important;
+                margin: 2px !important;
+                border-radius: 6px !important;
+            }
+            
+            .btn-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                justify-content: center;
+            }
+        }
+
+        /* Responsividade para telas muito pequenas */
+        @media (max-width: 320px) {
+            .container {
+                padding: 12px;
+            }
+            
+            h1 {
+                font-size: 1.3rem !important;
+            }
+            
+            .admin-header {
+                padding: 8px 10px !important;
+            }
+            
+            .admin-header h3 {
+                font-size: 0.9rem !important;
+            }
+            
+            .status-card {
+                padding: 10px !important;
+            }
+            
+            .test-result {
+                font-size: 11px !important;
+                padding: 4px 6px !important;
+            }
+            
+            .console-output {
+                font-size: 9px !important;
+                padding: 8px !important;
+                max-height: 150px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -99,7 +271,7 @@
                 <h3 style="margin: 0; color: #ef4444; font-size: 1.1rem;">🔒 Área Administrativa</h3>
                 <p style="margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8;">Acesso restrito - Ferramentas de teste e diagnóstico</p>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="logout-container" style="display: flex; gap: 10px; align-items: center;">
                 <span id="session-info" style="font-size: 0.8rem; opacity: 0.7;"></span>
                 <button onclick="logout()" style="background: rgba(239, 68, 68, 0.8); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
                     🚪 Logout
@@ -118,7 +290,7 @@
         
         <div class="status-card">
             <h2>🧪 Resultados dos Testes</h2>
-            <div>
+            <div class="btn-container" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 15px;">
                 <button class="btn" onclick="runManualTests()">🚀 Executar Testes Manualmente</button>
                 <button class="btn" onclick="clearResults()">🗑️ Limpar Resultados</button>
                 <button class="btn" onclick="exportResults()">💾 Exportar Resultados</button>
@@ -142,6 +314,31 @@
     <script src="tests.js"></script>
     
     <script>
+        // ⚠️ PROTEÇÃO IMEDIATA: Verificação de autenticação antes de carregar a página
+        (function() {
+            try {
+                const session = JSON.parse(localStorage.getItem('twbus_admin_session') || '{}');
+                const isActive = sessionStorage.getItem('twbus_admin_active') === 'true';
+                
+                const isAuthenticated = session.authenticated && 
+                                       session.expires > Date.now() && 
+                                       isActive &&
+                                       session.token;
+                
+                if (!isAuthenticated) {
+                    // Redirecionamento imediato para login
+                    window.location.replace('admin-login.html');
+                    throw new Error('Redirecionando para login...');
+                }
+            } catch (error) {
+                console.error('Acesso negado:', error.message);
+                if (!window.location.href.includes('admin-login.html')) {
+                    window.location.replace('admin-login.html');
+                }
+                throw error;
+            }
+        })();
+
         // =====================================================
         // VERIFICAÇÃO DE AUTENTICAÇÃO ADMINISTRATIVA
         // =====================================================
