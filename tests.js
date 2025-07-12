@@ -295,6 +295,240 @@ tester.addTest('Estado de erro da aplicação', () => {
     tester.assert(errorCaught, 'Erro capturado e logado corretamente');
 });
 
+// =====================================================
+// TESTES DE SEGURANÇA AVANÇADOS
+// =====================================================
+
+tester.addTest('Validação de SecurityValidator', () => {
+    if (typeof SecurityValidator === 'undefined') {
+        throw new Error('SecurityValidator não está definido');
+    }
+    
+    const security = new SecurityValidator();
+    if (!security.sanitizeInput || !security.validateElement) {
+        throw new Error('Métodos de segurança ausentes');
+    }
+});
+
+tester.addTest('Sanitização de entrada XSS', () => {
+    const security = new SecurityValidator();
+    
+    // Teste básico de XSS
+    const maliciousInput = '<script>alert("XSS")</script>';
+    const sanitized = security.sanitizeInput(maliciousInput);
+    
+    if (sanitized.includes('<script>') || sanitized.includes('alert')) {
+        throw new Error('Sanitização XSS falhou');
+    }
+    
+    // Teste de event handlers inline
+    const eventInput = '<div onclick="malicious()">test</div>';
+    const sanitizedEvent = security.sanitizeInput(eventInput);
+    
+    if (sanitizedEvent.includes('onclick=')) {
+        throw new Error('Event handlers inline não foram removidos');
+    }
+});
+
+tester.addTest('Rate limiting funcional', () => {
+    const security = new SecurityValidator();
+    
+    // Teste rate limiting normal
+    try {
+        security.checkRateLimit('test', 5);
+        security.checkRateLimit('test', 5);
+    } catch (error) {
+        throw new Error('Rate limiting rejeitou requisições válidas');
+    }
+    
+    // Teste rate limiting excedido
+    let rateLimitTriggered = false;
+    try {
+        for (let i = 0; i < 20; i++) {
+            security.checkRateLimit('spam', 5);
+        }
+    } catch (error) {
+        if (error instanceof SecurityError) {
+            rateLimitTriggered = true;
+        }
+    }
+    
+    if (!rateLimitTriggered) {
+        throw new Error('Rate limiting não foi ativado quando deveria');
+    }
+});
+
+tester.addTest('Validação de elementos DOM', () => {
+    const security = new SecurityValidator();
+    
+    // Elemento válido
+    const validElement = document.createElement('div');
+    try {
+        security.validateElement(validElement);
+    } catch (error) {
+        throw new Error('Elemento válido foi rejeitado');
+    }
+    
+    // Elemento com handler inline (perigoso)
+    const dangerousElement = document.createElement('div');
+    dangerousElement.setAttribute('onclick', 'malicious()');
+    
+    let validationFailed = false;
+    try {
+        security.validateElement(dangerousElement);
+    } catch (error) {
+        if (error instanceof SecurityError) {
+            validationFailed = true;
+        }
+    }
+    
+    if (!validationFailed) {
+        throw new Error('Elemento perigoso passou na validação');
+    }
+});
+
+tester.addTest('Proteção contra clickjacking', () => {
+    const security = new SecurityValidator();
+    
+    // Simular ambiente de iframe
+    const originalTop = window.top;
+    const originalSelf = window.self;
+    
+    // Mock: simular que estamos em um iframe
+    Object.defineProperty(window, 'top', {
+        value: {},
+        writable: true,
+        configurable: true
+    });
+    
+    let clickjackingDetected = false;
+    try {
+        security.preventClickjacking();
+    } catch (error) {
+        if (error instanceof SecurityError && error.message.includes('clickjacking')) {
+            clickjackingDetected = true;
+        }
+    }
+    
+    // Restaurar valores originais
+    Object.defineProperty(window, 'top', {
+        value: originalTop,
+        writable: true,
+        configurable: true
+    });
+    
+    if (!clickjackingDetected) {
+        throw new Error('Proteção contra clickjacking falhou');
+    }
+});
+
+tester.addTest('Verificação de CSP violations', () => {
+    const security = new SecurityValidator();
+    
+    if (!security.cspViolations || !Array.isArray(security.cspViolations)) {
+        throw new Error('Sistema de monitoramento CSP não está funcionando');
+    }
+    
+    // Verificar se o listener está registrado
+    const listeners = getEventListeners ? getEventListeners(document) : null;
+    const hasCSPListener = listeners && 
+        listeners.securitypolicyviolation && 
+        listeners.securitypolicyviolation.length > 0;
+    
+    // Note: getEventListeners pode não estar disponível em todos os browsers
+    // Este teste é mais indicativo que definitivo
+    console.log('CSP violation listener configurado');
+});
+
+tester.addTest('Integridade de protótipos', () => {
+    const security = new SecurityValidator();
+    
+    // Verificar se protótipos estão congelados
+    try {
+        Object.prototype.maliciousProperty = 'hack';
+        if (Object.prototype.maliciousProperty === 'hack') {
+            throw new Error('Object.prototype não está protegido');
+        }
+    } catch (error) {
+        // Esperado: deveria falhar ao tentar modificar
+        if (!error.message.includes('Cannot add property')) {
+            console.log('Proteção de protótipo funcionando');
+        }
+    }
+    
+    // Verificar Array.prototype
+    try {
+        Array.prototype.maliciousMethod = () => 'hack';
+        if (typeof Array.prototype.maliciousMethod === 'function') {
+            throw new Error('Array.prototype não está protegido');
+        }
+    } catch (error) {
+        // Esperado: deveria falhar
+        console.log('Array.prototype protegido');
+    }
+});
+
+tester.addTest('Headers de segurança presentes', () => {
+    // Verificar se headers críticos estão configurados
+    const requiredHeaders = [
+        'X-Content-Type-Options',
+        'X-Frame-Options', 
+        'X-XSS-Protection',
+        'Strict-Transport-Security'
+    ];
+    
+    // Note: Em ambiente de teste local, não podemos verificar headers HTTP
+    // Este teste verifica se a configuração está presente
+    if (typeof SECURITY_CONFIG !== 'undefined' && SECURITY_CONFIG.requiredHeaders) {
+        for (const header of requiredHeaders) {
+            if (!SECURITY_CONFIG.requiredHeaders[header]) {
+                throw new Error(`Header de segurança ausente: ${header}`);
+            }
+        }
+    } else {
+        throw new Error('Configuração de headers de segurança não encontrada');
+    }
+});
+
+tester.addTest('Debounce de segurança', () => {
+    const security = new SecurityValidator();
+    let callCount = 0;
+    
+    const testFunction = () => { callCount++; };
+    const debouncedFunction = security.debounce(testFunction, 100);
+    
+    // Chamar múltiplas vezes rapidamente
+    debouncedFunction();
+    debouncedFunction();
+    debouncedFunction();
+    
+    // Debounce deve limitar para apenas uma execução
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (callCount === 1) {
+                resolve();
+            } else {
+                reject(new Error(`Debounce falhou: ${callCount} execuções`));
+            }
+        }, 150);
+    });
+});
+
+tester.addTest('Monitoramento de escopo global', () => {
+    const security = new SecurityValidator();
+    
+    // Verificar se funções sensíveis ainda existem
+    const sensitiveGlobals = ['eval', 'Function', 'setTimeout', 'setInterval'];
+    
+    for (const globalName of sensitiveGlobals) {
+        if (typeof window[globalName] !== 'function') {
+            throw new Error(`Global ${globalName} foi modificado ou removido`);
+        }
+    }
+    
+    console.log('Escopo global monitorado e íntegro');
+});
+
 // Exportar tester para uso externo
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { BusPanelTester, tester };

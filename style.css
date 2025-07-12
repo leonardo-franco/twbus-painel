@@ -706,57 +706,209 @@ body {
     color: #4c63d2;
 }
 
-/* Estados de erro e segurança */
-.error-state {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-}
+/* =====================================================
+   ESTILOS DE SEGURANÇA
+   ===================================================== */
 
-.error-state .container {
-    background: rgba(255, 255, 255, 0.98);
-    border: 2px solid #ff4757;
-}
-
-.error-message {
-    background: rgba(255, 71, 87, 0.1);
-    border: 1px solid #ff4757;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 20px;
-    color: #c44569;
-    font-weight: bold;
-    text-align: center;
-}
-
-.loading-state {
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-.loading-state::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #667eea;
+/* Indicador de segurança */
+.security-indicator {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: rgba(34, 197, 94, 0.9);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    animation: securityPulse 2s infinite;
 }
 
-/* Proteção contra overflow */
-.container * {
-    max-width: 100%;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+@keyframes securityPulse {
+    0%, 100% { 
+        opacity: 0.8; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1.05);
+    }
 }
 
-/* Prevenção de XSS através de CSS */
-.user-content {
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-height: 200px;
-    overflow-y: auto;
+/* Estado de erro de segurança */
+body.security-error .container {
+    border: 2px solid #ef4444;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+body.security-error::before {
+    content: '🔒 Sistema Seguro Ativo';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    z-index: 1001;
+    animation: slideInDown 0.3s ease;
+}
+
+/* Headers de segurança visuais */
+.security-headers {
+    display: none; /* Escondido por padrão */
+}
+
+/* Rate limit warning */
+.rate-limit-warning {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(245, 158, 11, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 1002;
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* CSP Violation indicator */
+.csp-violation {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background: rgba(239, 68, 68, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    z-index: 1003;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Clickjacking protection overlay */
+.clickjacking-protection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.clickjacking-protection h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #ef4444;
+}
+
+.clickjacking-protection p {
+    font-size: 1.1rem;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+/* Elementos com validação de segurança */
+.security-validated {
+    position: relative;
+}
+
+.security-validated::after {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    background: #22c55e;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.security-validated:hover::after {
+    opacity: 1;
+}
+
+/* Modo de alta segurança */
+body.high-security .container {
+    border: 2px solid #22c55e;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+}
+
+body.high-security .security-indicator {
+    background: linear-gradient(45deg, #22c55e, #16a34a);
+    animation: securityRotate 3s linear infinite;
+}
+
+@keyframes securityRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile security adjustments */
+@media (max-width: 768px) {
+    .security-indicator {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+        top: 5px;
+        right: 5px;
+    }
+    
+    .rate-limit-warning {
+        bottom: 10px;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    
+    body.security-error::before {
+        font-size: 11px;
+        padding: 6px;
+    }
 }
