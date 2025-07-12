@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrativo - TwBus v1.1.1</title>
     <style>
         body {
@@ -18,6 +18,7 @@
         .sidebar {
             width: 280px;
             background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(15px);
             backdrop-filter: blur(15px);
             border-right: 1px solid rgba(255, 255, 255, 0.2);
             padding: 20px;
@@ -188,6 +189,7 @@
         
         .content-section {
             background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 25px;
@@ -458,7 +460,7 @@
         <!-- Informações do Usuário -->
         <div class="user-info">
             <div class="avatar">👨‍💻</div>
-            <div style="font-weight: 600; margin-bottom: 5px;" id="username-display">Admin</div>
+            <div class="username-display" id="username-display">Admin</div>
             <div class="session-status" id="session-time">Sessão: Calculando...</div>
             <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         </div>
@@ -471,28 +473,28 @@
         <div class="content-section active" id="dashboard-section">
             <h1>📊 Dashboard do Sistema</h1>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="grid-stats">
                 <div class="status-card">
                     <h3>⏱️ Uptime do Sistema</h3>
-                    <div style="font-size: 2rem; font-weight: bold; color: #4ade80;" id="system-uptime">Calculando...</div>
+                    <div class="metric-value success" id="system-uptime">Calculando...</div>
                 </div>
                 <div class="status-card">
                     <h3>🧪 Testes Executados</h3>
-                    <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;" id="tests-executed">0</div>
+                    <div class="metric-value primary" id="tests-executed">0</div>
                 </div>
                 <div class="status-card">
                     <h3>❌ Falhas Detectadas</h3>
-                    <div style="font-size: 2rem; font-weight: bold; color: #ef4444;" id="failures-count">0</div>
+                    <div class="metric-value danger" id="failures-count">0</div>
                 </div>
                 <div class="status-card">
                     <h3>📈 Performance</h3>
-                    <div style="font-size: 2rem; font-weight: bold; color: #8b5cf6;" id="performance-score">100%</div>
+                    <div class="metric-value purple" id="performance-score">100%</div>
                 </div>
             </div>
             
             <div class="status-card">
                 <h3>📈 Gráfico de Atividade</h3>
-                <div style="height: 200px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; opacity: 0.7;">
+                <div class="chart-placeholder">
                     📊 Gráfico em tempo real (Demo)
                 </div>
             </div>
@@ -511,13 +513,13 @@
             
             <div class="status-card">
                 <h3>⚡ Controles de Teste</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                <div class="controls-container">
                     <button class="btn" onclick="runManualTests()">▶️ Executar Testes</button>
                     <button class="btn" onclick="clearResults()">🗑️ Limpar Resultados</button>
                     <button class="btn" onclick="exportResults()">💾 Exportar Dados</button>
                     <button class="btn" onclick="toggleAutoMode()">🔄 Auto Mode</button>
                 </div>
-                <div style="font-size: 0.85rem; opacity: 0.7;">
+                <div class="text-small">
                     ℹ️ Use os controles acima para gerenciar a execução dos testes automáticos
                 </div>
             </div>
@@ -540,14 +542,14 @@
             <h1>📋 Logs do Sistema</h1>
             
             <div class="status-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div class="controls-header">
                     <h3>🔍 Logs Recentes</h3>
                     <div>
                         <button class="btn" onclick="clearLogs()">🗑️ Limpar Logs</button>
                         <button class="btn" onclick="exportLogs()">💾 Exportar</button>
                     </div>
                 </div>
-                <div id="system-logs" style="background: #1a1a1a; color: #00ff00; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 12px; max-height: 400px; overflow-y: auto;">
+                <div id="system-logs" class="console-extended">
                     Logs do sistema aparecerão aqui...<br>
                 </div>
             </div>
@@ -557,7 +559,7 @@
         <div class="content-section" id="security-section">
             <h1>🛡️ Painel de Segurança</h1>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="grid-stats-large">
                 <div class="status-card">
                     <h3>🔐 Status de Autenticação</h3>
                     <div id="auth-status">
@@ -589,14 +591,14 @@
         <div class="content-section" id="performance-section">
             <h1>⚡ Monitoramento de Performance</h1>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div class="grid-stats">
                 <div class="status-card">
                     <h3>🚀 Métricas de Carregamento</h3>
                     <div id="loading-metrics">
-                        <div style="margin: 10px 0;">
+                        <div class="margin-small">
                             <strong>DOM Loading:</strong> <span id="dom-loading">Calculando...</span>
                         </div>
-                        <div style="margin: 10px 0;">
+                        <div class="margin-small">
                             <strong>Page Load:</strong> <span id="page-load">Calculando...</span>
                         </div>
                     </div>
@@ -605,7 +607,7 @@
                 <div class="status-card">
                     <h3>💾 Uso de Memória</h3>
                     <div id="memory-usage">
-                        <div style="margin: 10px 0;">
+                        <div class="margin-small">
                             <strong>JS Heap:</strong> <span id="js-heap">Calculando...</span>
                         </div>
                     </div>
@@ -614,13 +616,13 @@
                 <div class="status-card">
                     <h3>📦 Status do Service Worker</h3>
                     <div id="sw-status">
-                        <div style="margin: 10px 0;">
+                        <div class="margin-small">
                             <strong>Status:</strong> <span id="sw-state">Verificando...</span>
                         </div>
-                        <div style="margin: 10px 0;">
+                        <div class="margin-small">
                             <strong>Cache:</strong> <span id="cache-info">Carregando...</span>
                         </div>
-                        <div style="margin: 10px 0;">
+                        <div class="margin-small">
                             <button class="btn" onclick="checkCacheStatus()">🔄 Verificar Cache</button>
                             <button class="btn" onclick="clearCache()">🗑️ Limpar Cache</button>
                         </div>
@@ -635,21 +637,21 @@
             
             <div class="status-card">
                 <h3>📊 Estatísticas de Uso</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div style="text-align: center; padding: 15px;">
-                        <div style="font-size: 2rem;">👥</div>
-                        <div style="font-size: 1.5rem; font-weight: bold;">1</div>
-                        <div style="opacity: 0.7;">Usuários Ativos</div>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-icon">👥</div>
+                        <div class="analytics-number">1</div>
+                        <div class="analytics-label">Usuários Ativos</div>
                     </div>
-                    <div style="text-align: center; padding: 15px;">
-                        <div style="font-size: 2rem;">🔄</div>
-                        <div style="font-size: 1.5rem; font-weight: bold;" id="page-views">0</div>
-                        <div style="opacity: 0.7;">Page Views</div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon">🔄</div>
+                        <div class="analytics-number" id="page-views">0</div>
+                        <div class="analytics-label">Page Views</div>
                     </div>
-                    <div style="text-align: center; padding: 15px;">
-                        <div style="font-size: 2rem;">⏱️</div>
-                        <div style="font-size: 1.5rem; font-weight: bold;" id="session-duration">0min</div>
-                        <div style="opacity: 0.7;">Duração da Sessão</div>
+                    <div class="analytics-card">
+                        <div class="analytics-icon">⏱️</div>
+                        <div class="analytics-number" id="session-duration">0min</div>
+                        <div class="analytics-label">Duração da Sessão</div>
                     </div>
                 </div>
             </div>
@@ -661,14 +663,14 @@
             
             <div class="status-card">
                 <h3>🔧 Configurações Gerais</h3>
-                <div style="margin: 20px 0;">
-                    <label style="display: block; margin: 10px 0;">
+                <div class="margin-container">
+                    <label class="settings-label">
                         <input type="checkbox" checked> Logs automáticos
                     </label>
-                    <label style="display: block; margin: 10px 0;">
+                    <label class="settings-label">
                         <input type="checkbox" checked> Testes automáticos
                     </label>
-                    <label style="display: block; margin: 10px 0;">
+                    <label class="settings-label">
                         <input type="checkbox"> Modo debug
                     </label>
                 </div>
@@ -681,7 +683,7 @@
             
             <div class="status-card">
                 <h3>💾 Storage Local</h3>
-                <div style="margin: 15px 0;">
+                <div class="margin-medium">
                     <button class="btn" onclick="showStorageInfo()">📊 Ver Uso do Storage</button>
                     <button class="btn" onclick="clearStorage()">🗑️ Limpar Storage</button>
                     <button class="btn" onclick="exportStorage()">💾 Exportar Dados</button>
@@ -698,7 +700,7 @@
             
             <div class="status-card">
                 <h3>🔄 Backup Automático</h3>
-                <div style="margin: 15px 0;">
+                <div class="margin-medium">
                     <button class="btn" onclick="createBackup()">💾 Criar Backup</button>
                     <button class="btn" onclick="restoreBackup()">🔄 Restaurar</button>
                 </div>

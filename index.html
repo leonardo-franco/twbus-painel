@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Painel interativo para informações de parada de ônibus em tempo real">
     <meta name="keywords" content="ônibus, transporte público, parada, tempo real, São Paulo">
     <meta name="author" content="TwBus">
@@ -38,10 +38,10 @@
             <div class="section-header">
                 <h3><i class="fas fa-route"></i> Rota do Ônibus</h3>
                 <div class="route-controls">
-                    <button class="control-btn" id="refreshBtn">
+                    <button class="control-btn" id="refreshBtn" title="Atualizar informações" aria-label="Atualizar informações">
                         <i class="fas fa-sync-alt"></i>
                     </button>
-                    <button class="control-btn" id="expandBtn">
+                    <button class="control-btn" id="expandBtn" title="Expandir/Recolher rota" aria-label="Expandir ou recolher rota">
                         <i class="fas fa-expand"></i>
                     </button>
                 </div>
@@ -49,7 +49,7 @@
             <div class="route-container">
                 <div class="route-line">
                     <!-- Paradas anteriores (visíveis apenas no modo expandido) -->
-                    <div class="stop passed extra" style="display: none;">
+                    <div class="stop passed extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Terminal Barra Funda</span>
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     
-                    <div class="stop passed extra" style="display: none;">
+                    <div class="stop passed extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Memorial da América Latina</span>
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                     
-                    <div class="stop passed extra" style="display: none;">
+                    <div class="stop passed extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Estação Marechal Deodoro</span>
@@ -135,7 +135,7 @@
                     </div>
                     
                     <!-- Paradas posteriores (visíveis apenas no modo expandido) -->
-                    <div class="stop upcoming extra" style="display: none;">
+                    <div class="stop upcoming extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Estação Tiradentes</span>
@@ -143,7 +143,7 @@
                         </div>
                     </div>
                     
-                    <div class="stop upcoming extra" style="display: none;">
+                    <div class="stop upcoming extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Mercado Municipal</span>
@@ -151,7 +151,7 @@
                         </div>
                     </div>
                     
-                    <div class="stop upcoming extra" style="display: none;">
+                    <div class="stop upcoming extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Rua 25 de Março</span>
@@ -159,7 +159,7 @@
                         </div>
                     </div>
                     
-                    <div class="stop upcoming extra" style="display: none;">
+                    <div class="stop upcoming extra hidden">
                         <div class="stop-icon"></div>
                         <div class="stop-info">
                             <span class="stop-name">Terminal Parque Dom Pedro</span>
@@ -207,8 +207,8 @@
                 <i class="fas fa-sync-alt"></i>
                 <span>Atualizado: 14:32</span>
             </div>
-            <div class="admin-access" style="position: relative;">
-                <button id="adminBtn" class="admin-btn" style="background: none; border: none; color: rgba(255,255,255,0.2); font-size: 0.8rem; cursor: pointer; padding: 4px 8px; transition: all 0.3s; border-radius: 4px;" title="Acesso Administrativo">
+            <div class="admin-access admin-relative">
+                <button id="adminBtn" class="admin-btn" title="Acesso Administrativo">
                     ⚙️
                 </button>
             </div>
