@@ -115,6 +115,7 @@ const CSP_POLICIES = {
     'script-src': [
         "'self'",
         "'unsafe-inline'", // Necessário para scripts inline
+        "'unsafe-eval'",   // Necessário para avaliação dinâmica de JavaScript
         "https://cdnjs.cloudflare.com"
     ],
     'style-src': [
