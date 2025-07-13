@@ -401,6 +401,65 @@ body {
     color: #667eea;
 }
 
+/* Cabeçalho da seção com controles */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header .fas {
+    color: #667eea;
+}
+
+/* Controles da rota */
+.route-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.control-btn {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    color: #667eea;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.control-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+    transform: scale(0.95);
+}
+
+.control-btn .fas {
+    color: inherit;
+}
+
 .route-container {
     height: 100%;
     overflow-y: auto;
@@ -777,74 +836,20 @@ body {
     }
 }
 
-/* Responsividade Mobile First */
+/* Responsividade Mobile First - Corrigida */
 
-/* Mobile Extra Small (até 320px) */
-@media (max-width: 320px) {
+/* Mobile Small (max-width: 480px) */
+@media (max-width: 480px) {
     body {
-        padding: 5px;
-        font-size: 14px;
+        padding: 10px;
     }
     
     .container {
         width: 100%;
         max-width: none;
         margin: 0;
-        border-radius: 10px;
-        min-height: calc(100vh - 10px);
-    }
-    
-    .header {
-        padding: 10px;
-    }
-    
-    .bus-number .number {
-        font-size: 24px;
-    }
-    
-    .arrival-time .time {
-        font-size: 18px;
-    }
-    
-    .route-section {
-        padding: 15px 10px;
-    }
-    
-    .stop {
-        padding: 10px;
-        margin: 8px 0;
-    }
-    
-    .stop-name {
-        font-size: 14px;
-    }
-    
-    .stop-status {
-        font-size: 12px;
-    }
-    
-    .control-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-        /* Melhor área de toque */
-        min-width: 44px;
-        min-height: 44px;
-    }
-}
-
-/* Mobile Small (321px - 480px) */
-@media (min-width: 321px) and (max-width: 480px) {
-    body {
-        padding: 8px;
-    }
-    
-    .container {
-        width: 100%;
-        max-width: none;
-        height: auto;
-        min-height: calc(100vh - 16px);
         border-radius: 15px;
+        min-height: calc(100vh - 20px);
     }
     
     .header {
@@ -862,14 +867,6 @@ body {
         font-size: 20px;
     }
     
-    .bus-number .number {
-        font-size: 28px;
-    }
-    
-    .arrival-time .time {
-        font-size: 22px;
-    }
-    
     .divider {
         display: none;
     }
@@ -878,51 +875,17 @@ body {
         padding: 20px 15px;
     }
     
-    .section-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-    }
-    
     .section-header h3 {
         font-size: 16px;
-        flex: 1;
-    }
-    
-    .route-controls {
-        display: flex;
-        gap: 8px;
     }
     
     .control-btn {
         width: 36px;
         height: 36px;
         font-size: 16px;
-        /* Área de toque otimizada */
+        /* Área de toque mínima */
         min-width: 44px;
         min-height: 44px;
-        /* Feedback tátil melhorado */
-        transition: all 0.2s ease;
-    }
-    
-    .control-btn:active {
-        transform: scale(0.95);
-        background: rgba(102, 126, 234, 0.2);
-    }
-    
-    .stop {
-        padding: 15px;
-        margin: 10px 0;
-        /* Melhor área de toque para os stops */
-        min-height: 60px;
-        /* Feedback visual no toque */
-        transition: all 0.2s ease;
-    }
-    
-    .stop:active {
-        transform: scale(0.98);
-        background: rgba(102, 126, 234, 0.05);
     }
     
     .info-section {
@@ -944,7 +907,6 @@ body {
     .info-item {
         justify-content: center;
         text-align: center;
-        min-height: 50px;
     }
     
     .additional-info {
@@ -955,70 +917,77 @@ body {
     /* Modo expandido mobile */
     .container.expanded {
         max-width: none;
-        min-height: calc(100vh - 16px);
+        min-height: calc(100vh - 20px);
     }
     
     .container.expanded .route-container {
-        max-height: 65vh;
-        /* Scroll otimizado para touch */
-        scroll-behavior: smooth;
-        overscroll-behavior: contain;
-    }
-    
-    /* Animações extras no mobile */
-    .container.expanded .stop.extra {
-        animation-duration: 0.3s;
-    }
-    
-    /* Install banner mobile */
-    .install-banner {
-        margin: 5px;
-        border-radius: 10px;
-    }
-    
-    .banner-content {
-        padding: 10px 15px;
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    
-    .banner-actions {
-        justify-content: center;
-        gap: 10px;
-    }
-    
-    .btn-install, .btn-dismiss {
-        min-width: 44px;
-        min-height: 44px;
-        padding: 8px 16px;
+        max-height: 60vh;
     }
 }
 
-/* Melhorias para touch devices */
-@media (pointer: coarse) {
-    /* Todos os elementos interativos têm área mínima de toque */
-    button, .control-btn, .stop, .btn-install, .btn-dismiss {
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .container {
+        max-width: 380px;
+    }
+    
+    .container.expanded {
+        max-width: 480px;
+        min-height: 700px;
+    }
+    
+    .header {
+        padding: 18px;
+    }
+    
+    .bus-number, .arrival-time {
+        font-size: 22px;
+    }
+    
+    .control-btn {
+        width: 38px;
+        height: 38px;
         min-width: 44px;
         min-height: 44px;
-        /* Espaçamento melhor para dedos */
-        margin: 2px;
+    }
+}
+
+/* Desktop (769px+) */
+@media (min-width: 769px) {
+    .container {
+        max-width: 420px;
     }
     
-    /* Feedback visual melhorado */
-    button:active, .control-btn:active {
+    .container.expanded {
+        max-width: 550px;
+        min-height: 850px;
+    }
+    
+    .container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stop:hover {
+        transform: translateX(8px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .control-btn:hover {
+        background: rgba(102, 126, 234, 0.1);
+        transform: scale(1.05);
+    }
+}
+
+/* Touch devices - melhorias mínimas */
+@media (pointer: coarse) {
+    .control-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .control-btn:active {
         transform: scale(0.95);
-        opacity: 0.8;
-    }
-    
-    /* Scrollbar otimizada para touch */
-    .route-container::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .route-container::-webkit-scrollbar-thumb {
-        background: rgba(102, 126, 234, 0.6);
-        border-radius: 4px;
     }
 }
 
@@ -1026,36 +995,16 @@ body {
 @media (max-width: 768px) and (orientation: landscape) {
     .container {
         max-width: 90vw;
-        min-height: 100vh;
         margin: 0 auto;
-    }
-    
-    .header {
-        padding: 10px 15px;
     }
     
     .bus-info {
         flex-direction: row;
         justify-content: space-around;
-        text-align: center;
-    }
-    
-    .route-section {
-        padding: 15px;
     }
     
     .container.expanded .route-container {
         max-height: 50vh;
-    }
-    
-    .info-section {
-        padding: 10px 15px;
-    }
-    
-    .info-card {
-        flex-direction: row;
-        align-items: center;
-        padding: 10px 15px;
     }
 }
 
@@ -1129,66 +1078,6 @@ body {
             opacity: 0.8;
             transform: translateX(-50%) scale(1.2);
         }
-    }
-}
-
-/* Classes específicas para dispositivos móveis */
-.mobile-device {
-    /* Otimizações específicas para mobile */
-    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-.mobile-device .container {
-    /* Melhor rendering em mobile */
-    will-change: transform;
-    transform: translateZ(0);
-}
-
-.mobile-device .interactive-element {
-    /* Feedback visual melhorado */
-    transition: transform 0.1s ease, opacity 0.1s ease;
-}
-
-.mobile-device .interactive-element:active {
-    transform: scale(0.98);
-    opacity: 0.8;
-}
-
-/* Modo landscape específico */
-.landscape-mode .container {
-    /* Ajustes quando em modo paisagem */
-    max-width: 90vw;
-}
-
-.landscape-mode .header {
-    padding: 8px 15px;
-}
-
-.landscape-mode .bus-info {
-    gap: 20px;
-}
-
-.landscape-mode .route-section {
-    padding: 12px 15px;
-}
-
-.landscape-mode .info-section {
-    padding: 8px 15px;
-}
-
-/* Melhorias para notch e safe areas */
-@supports (padding: max(0px)) {
-    .container {
-        padding-left: max(15px, env(safe-area-inset-left));
-        padding-right: max(15px, env(safe-area-inset-right));
-    }
-    
-    .mobile-device .container {
-        padding-top: max(10px, env(safe-area-inset-top));
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
     }
 }
 
