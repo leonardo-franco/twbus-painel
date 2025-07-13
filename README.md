@@ -1,53 +1,283 @@
-# 🚌 TwBus - Painel de Ônibus Inteligente
+# 🚌 TwBus - Painel de Parada de Ônibus
 
-Sistema completo para painel informativo de parada de ônibus com dashboard administrativo avançado.
+Sistema de painel interativo para informações de parada de ônibus em tempo real, desenvolvido com arquitetura moderna e focado em segurança e performance.
 
-## 🎯 Funcionalidades
+## 🚀 Características
 
-### 📊 Painel Principal
-- Interface glassmorphism moderna e responsiva
-- Informações de chegada de ônibus em tempo real
-- Condições climáticas atuais
-- Notícias e alertas do transporte público
-- Design otimizado para telas de totem
+- **Arquitetura Modular**: Código organizado em módulos ES6 com responsabilidades bem definidas
+- **Segurança Avançada**: Sistema de validação robusto com CSP, rate limiting e sanitização
+- **PWA Completa**: Suporte offline, instalação e notificações push
+- **Responsive Design**: Interface adaptável para todos os dispositivos
+- **Acessibilidade**: Compatível com ARIA e ferramentas de assistência
+- **Performance**: Carregamento otimizado e animações fluidas
+- **Testes Automatizados**: Cobertura de testes abrangente
+- **Código Limpo**: Seguindo padrões de Clean Code e melhores práticas
 
-### 🔒 Sistema Administrativo
-- **Login seguro** com múltiplos usuários
-- **Dashboard completo** com métricas em tempo real
-- **Testes automáticos** integrados
-- **Logs do sistema** com exportação
-- **Monitoramento de segurança** avançado
-- **Analytics e performance** detalhados
-- **Sistema de backup** completo
-- **Gerenciamento de storage** local
+## 🏗️ Arquitetura
+
+### Estrutura do Projeto
+
+```
+src/
+├── app.js                 # Ponto de entrada principal
+├── core/
+│   ├── BusPanel.js        # Classe principal do painel
+│   └── EventManager.js    # Gerenciamento de eventos
+├── security/
+│   └── SecurityValidator.js # Sistema de segurança
+└── utils/
+    ├── constants.js       # Constantes do sistema
+    └── helpers.js         # Funções utilitárias
+```
+
+### Padrões Implementados
+
+- **Singleton**: Para validador de segurança e gerenciador de eventos
+- **Observer**: Para comunicação entre componentes
+- **Module Pattern**: Para encapsulamento e organização
+- **Factory Pattern**: Para criação de elementos DOM
+- **Strategy Pattern**: Para diferentes tipos de validação
 
 ## 🛡️ Segurança
 
-- Autenticação SHA-256 com sessões protegidas
-- XSS Protection e Input Sanitization
-- Content Security Policy (CSP) rigoroso
-- Rate limiting para prevenção de ataques
-- HTTPS obrigatório com headers de segurança
+### Funcionalidades de Segurança
 
-## 🧪 Testes Automáticos
+- **Content Security Policy (CSP)**: Prevenção de XSS e injection
+- **Rate Limiting**: Controle de frequência de requisições
+- **Input Sanitization**: Limpeza e validação de entradas
+- **Prototype Pollution Protection**: Prevenção de modificação de protótipos
+- **Clickjacking Protection**: Prevenção de ataques de frame
+- **Global Scope Monitoring**: Monitoramento de modificações perigosas
 
-- **20+ testes** de componentes e funcionalidades
-- Verificação automática de segurança
-- Monitoramento de performance
-- Relatórios exportáveis em JSON
+### Validações Implementadas
 
-## 🚀 Deploy
+- Validação de elementos DOM
+- Sanitização de strings
+- Verificação de origem de requisições
+- Validação de tipos de evento
+- Verificação de integridade de scripts
 
-**URL de Produção:** https://twbus.vercel.app
+## 📱 Progressive Web App (PWA)
 
-### Acesso Público:
-- **Painel Principal:** https://twbus.vercel.app
+### Funcionalidades PWA
 
-### Acesso Administrativo:
-- **Login:** https://twbus.vercel.app/admin-login.html
-- **Dashboard:** https://twbus.vercel.app/admin-dashboard.html
+- **Service Worker**: Cache inteligente e atualizações
+- **App Manifest**: Instalação nativa
+- **Offline Support**: Funcionalidade completa offline
+- **Push Notifications**: Notificações em tempo real
+- **Background Sync**: Sincronização em background
 
-### Credenciais de Teste:
+### Instalação
+
+O app pode ser instalado diretamente do navegador:
+1. Acesse o painel
+2. Clique em "Instalar" quando solicitado
+3. O app será adicionado à tela inicial
+
+## 🎨 Interface
+
+### Design System
+
+- **Cores**: Gradientes modernos com alta legibilidade
+- **Tipografia**: Inter font para melhor readability
+- **Animações**: Transições fluidas com CSS3
+- **Componentes**: Reutilizáveis e modulares
+- **Responsividade**: Mobile-first approach
+
+### Acessibilidade
+
+- **ARIA Labels**: Descrições para screen readers
+- **Keyboard Navigation**: Navegação completa por teclado
+- **High Contrast**: Suporte a modo de alto contraste
+- **Focus Management**: Gerenciamento inteligente de foco
+- **Semantic HTML**: Estrutura semântica correta
+
+## � Desenvolvimento
+
+### Requisitos
+
+- Node.js 16+
+- NPM ou Yarn
+- Navegador moderno com suporte a ES6
+
+### Instalação
+
+```bash
+# Clonar repositório
+git clone https://github.com/leonardo-franco/twbus-painel.git
+
+# Instalar dependências
+npm install
+
+# Executar em modo desenvolvimento
+npm run dev
+```
+
+### Scripts Disponíveis
+
+```bash
+# Desenvolvimento
+npm run dev          # Servidor de desenvolvimento
+npm run build        # Build para produção
+npm run preview      # Preview da build
+
+# Qualidade do código
+npm run lint         # Verificar código com ESLint
+npm run lint:fix     # Corrigir problemas automaticamente
+npm run format       # Formatar código com Prettier
+npm run format:check # Verificar formatação
+
+# Testes
+npm run test         # Executar testes
+npm run test:watch   # Executar testes em modo watch
+npm run test:coverage # Executar testes com cobertura
+
+# Validação
+npm run validate     # Executar lint + testes
+npm run security-check # Verificar vulnerabilidades
+
+# Deploy
+npm run deploy       # Deploy para produção
+```
+
+### Configuração de Ambiente
+
+O projeto utiliza as seguintes ferramentas:
+
+- **ESLint**: Linting de código JavaScript
+- **Prettier**: Formatação consistente
+- **Jest**: Framework de testes
+- **Live Server**: Servidor de desenvolvimento
+- **Vercel**: Deploy e hospedagem
+
+## 🧪 Testes
+
+### Estratégia de Testes
+
+- **Unit Tests**: Testes de componentes individuais
+- **Integration Tests**: Testes de integração entre módulos
+- **Security Tests**: Testes de segurança automatizados
+- **Performance Tests**: Testes de performance
+- **Accessibility Tests**: Testes de acessibilidade
+
+### Executar Testes
+
+```bash
+# Executar todos os testes
+npm run test
+
+# Executar testes com cobertura
+npm run test:coverage
+
+# Executar testes em modo watch
+npm run test:watch
+```
+
+### Cobertura de Testes
+
+Mantemos uma cobertura mínima de 80% em:
+- Branches
+- Functions
+- Lines
+- Statements
+
+## 📊 Monitoramento
+
+### Métricas Disponíveis
+
+- **Métricas de Segurança**: Violações CSP, rate limiting, etc.
+- **Métricas de Performance**: Tempo de carregamento, FPS
+- **Métricas de Uso**: Eventos do usuário, navegação
+- **Métricas de Erro**: Erros JavaScript, falhas de rede
+
+### Acesso às Métricas
+
+```javascript
+// No console do navegador
+window.getAppMetrics()
+```
+
+## 🌐 Deploy
+
+### Vercel (Recomendado)
+
+```bash
+# Deploy automático
+npm run deploy
+
+# Deploy manual
+npx vercel --prod
+```
+
+### Outros Provedores
+
+O projeto é compatível com:
+- Netlify
+- GitHub Pages
+- AWS S3
+- Firebase Hosting
+
+## 🔄 Versionamento
+
+Seguimos o padrão [Semantic Versioning](https://semver.org/):
+- **MAJOR**: Mudanças incompatíveis
+- **MINOR**: Novas funcionalidades compatíveis
+- **PATCH**: Correções de bugs
+
+## 📝 Changelog
+
+### v2.0.0 (Atual)
+- ✨ Arquitetura modular completa
+- 🔒 Sistema de segurança avançado
+- 📱 PWA otimizada
+- 🧪 Testes automatizados
+- 🎨 Interface melhorada
+- ♿ Acessibilidade aprimorada
+
+### v1.0.0
+- 🚀 Versão inicial
+- 🚌 Painel básico de ônibus
+- 🎯 Funcionalidades essenciais
+
+## 🤝 Contribuição
+
+1. Fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adicionar nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+### Padrões de Contribuição
+
+- Seguir o guia de estilo do ESLint
+- Adicionar testes para novas funcionalidades
+- Documentar mudanças no código
+- Manter cobertura de testes acima de 80%
+
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 👥 Equipe
+
+- **TwBus Team** - Desenvolvimento e manutenção
+- **Leonardo Franco** - Arquitetura e implementação
+
+## 📞 Suporte
+
+- **Issues**: [GitHub Issues](https://github.com/leonardo-franco/twbus-painel/issues)
+- **Documentação**: [Wiki do Projeto](https://github.com/leonardo-franco/twbus-painel/wiki)
+- **Email**: contato@twbus.com
+
+## 🙏 Agradecimentos
+
+- Comunidade open source
+- Contribuidores do projeto
+- Usuários que fornecem feedback
+
+---
+
+**TwBus** - Transformando o transporte público com tecnologia moderna 🚌✨
 - **admin / admin123**
 - **manager / manager456**  
 - **operator / operator789**

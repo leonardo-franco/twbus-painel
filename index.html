@@ -24,6 +24,23 @@
     <title>TwBus - Painel de Parada</title>
 </head>
 <body>
+    <!-- Indicadores de sistema -->
+    <div id="system-indicators" class="system-indicators"></div>
+    
+    <!-- Banner de instalação PWA -->
+    <div id="installBanner" class="install-banner">
+        <div class="banner-content">
+            <div class="banner-text">
+                <strong>📱 Instalar TwBus</strong>
+                <span>Acesse offline e receba notificações</span>
+            </div>
+            <div class="banner-actions">
+                <button id="installBannerBtn" class="btn-install">Instalar</button>
+                <button id="dismissBannerBtn" class="btn-dismiss">✕</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <!-- Cabeçalho com número e tempo -->
         <div class="header">
@@ -222,252 +239,11 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Scripts modernos com módulos ES6 -->
+    <script type="module" src="src/app.js"></script>
     <script src="tests.js"></script>
-    <script>
-        // Inicialização do painel e testes automáticos
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                // Aguardar carregamento dos scripts
-                if (typeof BusPanel === 'undefined') {
-                    console.warn('⚠️ BusPanel não encontrado, usando modo básico');
-                    return;
-                }
-                
-                // Inicializar painel principal
-                window.busPanel = new BusPanel();
-                console.log('✅ Painel TwBus inicializado com sucesso');
-                
-                // Verificar se o sistema de testes está disponível
-                if (typeof BusPanelTester !== 'undefined') {
-                    // Executar testes de segurança automaticamente
-                    console.log('\n🔒 Iniciando testes de segurança automáticos...');
-                    const tester = new BusPanelTester();
-                    
-                    // Registrar todos os testes
-                    tester.registerAllTests();
-                    
-                    // Executar testes
-                    const testsPassed = await tester.runAllTests();
-                    
-                    // Mostrar resultado visual
-                    if (testsPassed) {
-                        console.log('\n🎉 Todos os testes de segurança passaram!');
-                        document.body.classList.add('tests-passed');
-                        
-                        // Adicionar indicador visual de sucesso
-                        const successIndicator = document.createElement('div');
-                        successIndicator.className = 'test-success-indicator';
-                        successIndicator.innerHTML = '✅ Testes OK';
-                        successIndicator.title = 'Todos os testes de segurança passaram';
-                        document.body.appendChild(successIndicator);
-                    } else {
-                        console.error('\n⚠️ Alguns testes falharam - verifique o console');
-                        document.body.classList.add('tests-failed');
-                        
-                        // Adicionar indicador visual de falha
-                        const failIndicator = document.createElement('div');
-                        failIndicator.className = 'test-fail-indicator';
-                        failIndicator.innerHTML = '⚠️ Testes';
-                        failIndicator.title = 'Alguns testes falharam - verifique o console';
-                        document.body.appendChild(failIndicator);
-                    }
-                } else {
-                    console.warn('⚠️ Sistema de testes não carregado');
-                }
-                
-            } catch (error) {
-                console.error('❌ Erro crítico na inicialização:', error);
-                document.body.classList.add('error-state');
-                
-                // Indicador de erro crítico
-                const errorIndicator = document.createElement('div');
-                errorIndicator.className = 'critical-error-indicator';
-                errorIndicator.innerHTML = '🚨 Erro';
-                errorIndicator.title = 'Erro crítico - verifique o console';
-                document.body.appendChild(errorIndicator);
-            }
-        });
-        
-        // PWA e Service Worker
-        let deferredPrompt;
-        let installBtn = document.getElementById('installBtn');
-        let installBanner = document.getElementById('installBanner');
-        let installBannerBtn = document.getElementById('installBannerBtn');
-        let dismissBannerBtn = document.getElementById('dismissBannerBtn');
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registrado:', registration.scope);
-                        
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            console.log('🔄 Service Worker: Nova versão detectada');
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('⬆️ Service Worker: Atualização disponível');
-                                    showUpdateAvailable();
-                                }
-                            });
-                        });
-                        
-                        // Log cache status
-                        caches.keys().then(cacheNames => {
-                            console.log('📂 Caches disponíveis:', cacheNames);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('❌ Service Worker falhou:', error);
-                    });
-            });
-        } else {
-            console.warn('⚠️ Service Worker não suportado neste navegador');
-        }
-
-        // PWA Install Prompt
-        window.addEventListener('beforeinstallprompt', (e) => {
-            console.log('💾 PWA: Install prompt disponível');
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Show install banner after 3 seconds
-            setTimeout(() => {
-                if (!localStorage.getItem('pwa-dismissed')) {
-                    if (installBanner) {
-                        installBanner.style.display = 'block';
-                        installBanner.classList.add('show');
-                    }
-                }
-            }, 3000);
-            
-            if (installBtn) installBtn.style.display = 'flex';
-        });
-
-        // Install button click
-        function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((result) => {
-                    if (result.outcome === 'accepted') {
-                        console.log('✅ PWA: Usuário aceitou instalação');
-                        hideBanner();
-                    } else {
-                        console.log('❌ PWA: Usuário recusou instalação');
-                    }
-                    deferredPrompt = null;
-                });
-            }
-        }
-
-        // Event listeners for install
-        if (installBtn) {
-            installBtn.addEventListener('click', installPWA);
-        }
-        
-        if (installBannerBtn) {
-            installBannerBtn.addEventListener('click', installPWA);
-        }
-
-        if (dismissBannerBtn) {
-            dismissBannerBtn.addEventListener('click', () => {
-                hideBanner();
-                localStorage.setItem('pwa-dismissed', 'true');
-            });
-        }
-
-        function hideBanner() {
-            if (installBanner) {
-                installBanner.classList.remove('show');
-                setTimeout(() => {
-                    installBanner.style.display = 'none';
-                }, 300);
-            }
-        }
-
-        // App installed
-        window.addEventListener('appinstalled', () => {
-            console.log('🎉 PWA: App instalado com sucesso');
-            if (installBtn) installBtn.style.display = 'none';
-            hideBanner();
-            
-            // Show welcome message
-            if (window.busPanel) {
-                setTimeout(() => {
-                    alert('🎉 TwBus instalado com sucesso!\nAgora você pode acessar offline.');
-                }, 1000);
-            }
-        });
-
-        // Show update available notification
-        function showUpdateAvailable() {
-            const updateBanner = document.createElement('div');
-            updateBanner.className = 'update-banner';
-            updateBanner.innerHTML = `
-                <div class="banner-content">
-                    <span>🔄 Nova versão disponível!</span>
-                    <button onclick="updateApp()" class="btn-update">Atualizar</button>
-                </div>
-            `;
-            document.body.appendChild(updateBanner);
-        }
-
-        function updateApp() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready.then(registration => {
-                    registration.update();
-                    window.location.reload();
-                });
-            }
-        }
-
-        // Network status
-        window.addEventListener('online', () => {
-            console.log('🌐 Conexão restaurada');
-            document.body.classList.remove('offline');
-        });
-
-        window.addEventListener('offline', () => {
-            console.log('📱 Modo offline ativado');
-            document.body.classList.add('offline');
-        });
-        
-        // Admin access button
-        const adminBtn = document.getElementById('adminBtn');
-        if (adminBtn) {
-            adminBtn.addEventListener('click', function() {
-                let clickCount = this.dataset.clicks || 0;
-                clickCount++;
-                this.dataset.clicks = clickCount;
-                
-                // Múltiplos cliques para acesso administrativo (segurança por obscuridade)
-                if (clickCount >= 5) {
-                    window.location.href = 'admin-login.html';
-                }
-                
-                // Reset counter após 3 segundos
-                setTimeout(() => {
-                    this.dataset.clicks = 0;
-                }, 3000);
-                
-                // Feedback visual
-                this.style.color = clickCount >= 3 ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.2)';
-            });
-            
-            // Hover effect para o botão admin
-            adminBtn.addEventListener('mouseenter', function() {
-                this.style.color = 'rgba(255,255,255,0.5)';
-                this.style.background = 'rgba(255,255,255,0.1)';
-            });
-            
-            adminBtn.addEventListener('mouseleave', function() {
-                this.style.color = 'rgba(255,255,255,0.2)';
-                this.style.background = 'none';
-            });
-        }
-    </script>
+    
+    <!-- Fallback para navegadores sem suporte a módulos -->
+    <script nomodule src="script.js"></script>
 </body>
 </html>
