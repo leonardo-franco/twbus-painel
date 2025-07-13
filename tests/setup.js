@@ -3,9 +3,6 @@
  * Setup global para ambiente de teste
  */
 
-// Configuração do DOM
-import 'jest-dom/extend-expect';
-
 // Configuração de mocks globais
 global.console = {
   ...console,
