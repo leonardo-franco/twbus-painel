@@ -6,7 +6,7 @@
 // Log de debug inicial
 console.log('🚀 Carregando módulo app.js...');
 
-import { SYSTEM_CONFIG, STORAGE_KEYS, URLS } from './utils/constants.js';
+import { SYSTEM_CONFIG, STORAGE_KEYS, URLS, CSS_CLASSES } from './utils/constants.js';
 import { LogUtils, StorageUtils, TimeUtils } from './utils/helpers.js';
 import { BusPanel } from './core/BusPanel.js';
 import { eventManager } from './core/EventManager.js';
@@ -253,7 +253,7 @@ class TwBusApp {
     setupConnectivityEvents() {
         window.addEventListener('online', () => {
             LogUtils.info(SYSTEM_CONFIG.MESSAGES.CONNECTION_RESTORED);
-            document.body.classList.remove(SYSTEM_CONFIG.CSS_CLASSES.OFFLINE);
+            document.body.classList.remove(CSS_CLASSES.OFFLINE);
             
             eventManager.emit('connectivity:online', {
                 timestamp: new Date()
@@ -262,7 +262,7 @@ class TwBusApp {
 
         window.addEventListener('offline', () => {
             LogUtils.info(SYSTEM_CONFIG.MESSAGES.OFFLINE_MODE);
-            document.body.classList.add(SYSTEM_CONFIG.CSS_CLASSES.OFFLINE);
+            document.body.classList.add(CSS_CLASSES.OFFLINE);
             
             eventManager.emit('connectivity:offline', {
                 timestamp: new Date()
@@ -353,11 +353,11 @@ class TwBusApp {
                 
                 if (testsPassed) {
                     LogUtils.info(SYSTEM_CONFIG.MESSAGES.SECURITY_TESTS_PASSED);
-                    document.body.classList.add(SYSTEM_CONFIG.CSS_CLASSES.TESTS_PASSED);
+                    document.body.classList.add(CSS_CLASSES.TESTS_PASSED);
                     this.showTestSuccessIndicator();
                 } else {
                     LogUtils.error(SYSTEM_CONFIG.MESSAGES.SECURITY_TESTS_FAILED);
-                    document.body.classList.add(SYSTEM_CONFIG.CSS_CLASSES.TESTS_FAILED);
+                    document.body.classList.add(CSS_CLASSES.TESTS_FAILED);
                     this.showTestFailIndicator();
                 }
             } else {
@@ -429,7 +429,7 @@ class TwBusApp {
         this.state.hasErrors = true;
         
         LogUtils.error(SYSTEM_CONFIG.MESSAGES.CRITICAL_ERROR, error);
-        document.body.classList.add(SYSTEM_CONFIG.CSS_CLASSES.ERROR_STATE);
+        document.body.classList.add(CSS_CLASSES.ERROR_STATE);
         
         // Criar indicador de erro crítico
         const errorIndicator = document.createElement('div');
