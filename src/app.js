@@ -3,17 +3,24 @@
  * Inicializa todos os módulos e gerencia o ciclo de vida da aplicação
  */
 
+// Log de debug inicial
+console.log('🚀 Carregando módulo app.js...');
+
 import { SYSTEM_CONFIG, STORAGE_KEYS, URLS } from './utils/constants.js';
 import { LogUtils, StorageUtils, TimeUtils } from './utils/helpers.js';
 import { BusPanel } from './core/BusPanel.js';
 import { eventManager } from './core/EventManager.js';
 import { securityValidator } from './security/SecurityValidator.js';
 
+console.log('✅ Imports carregados com sucesso');
+
 /**
  * Classe principal da aplicação
  */
 class TwBusApp {
     constructor() {
+        console.log('🏗️ Construindo TwBusApp...');
+
         this.state = {
             isInitialized: false,
             hasErrors: false,
@@ -498,19 +505,23 @@ class TwBusApp {
 
 // Inicializar aplicação quando DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🌟 DOM carregado, inicializando aplicação...');
     try {
         // Exportar para escopo global para compatibilidade
         window.TwBusApp = TwBusApp;
         
         // Inicializar aplicação
+        console.log('🚀 Criando instância do TwBusApp...');
         const app = new TwBusApp();
         window.twBusApp = app;
         
         // Disponibilizar métricas no console para debug
         window.getAppMetrics = () => app.getMetrics();
         
+        console.log('✅ Aplicação inicializada com sucesso!');
+        
     } catch (error) {
-        console.error('Erro crítico na inicialização:', error);
+        console.error('❌ Erro crítico na inicialização:', error);
     }
 });
 

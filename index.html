@@ -245,5 +245,60 @@
     
     <!-- Fallback para navegadores sem suporte a módulos -->
     <script nomodule src="script.js"></script>
+    
+    <!-- Script de emergência para funcionalidade de expandir -->
+    <script>
+        // Garantir que a funcionalidade de expandir funcione independentemente
+        function initExpandFunctionality() {
+            const expandBtn = document.getElementById('expandBtn');
+            const container = document.querySelector('.container');
+            
+            if (expandBtn && container && !expandBtn.hasAttribute('data-initialized')) {
+                let isExpanded = false;
+                
+                expandBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Toggle expanded state
+                    isExpanded = !isExpanded;
+                    
+                    if (isExpanded) {
+                        container.classList.add('expanded');
+                        expandBtn.innerHTML = '<i class="fas fa-compress" aria-hidden="true"></i>';
+                        expandBtn.setAttribute('aria-label', 'Contrair painel');
+                        
+                        // Show extra stops
+                        const extraStops = document.querySelectorAll('.stop.extra');
+                        extraStops.forEach(stop => {
+                            stop.classList.remove('hidden');
+                        });
+                    } else {
+                        container.classList.remove('expanded');
+                        expandBtn.innerHTML = '<i class="fas fa-expand" aria-hidden="true"></i>';
+                        expandBtn.setAttribute('aria-label', 'Expandir painel');
+                        
+                        // Hide extra stops
+                        const extraStops = document.querySelectorAll('.stop.extra');
+                        extraStops.forEach(stop => {
+                            stop.classList.add('hidden');
+                        });
+                    }
+                });
+                
+                expandBtn.setAttribute('data-initialized', 'true');
+                console.log('✅ Funcionalidade de expandir inicializada');
+            }
+        }
+        
+        // Inicializar quando DOM estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initExpandFunctionality);
+        } else {
+            initExpandFunctionality();
+        }
+        
+        // Backup: tentar novamente após 1 segundo
+        setTimeout(initExpandFunctionality, 1000);
+    </script>
 </body>
 </html>
