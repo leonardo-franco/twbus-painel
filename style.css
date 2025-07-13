@@ -524,19 +524,52 @@ body {
 }
 
 .stop-icon {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     position: absolute;
-    left: -44px;
+    left: -42px;
     z-index: 2;
-    font-size: 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border: 3px solid white;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    animation: stopFadeIn 0.6s ease-out;
+}
+
+/* Ícones especiais dentro do stop-icon */
+.stop-icon i {
+    position: absolute;
+    z-index: 4;
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -6px;
+    left: -6px;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Ícone do ônibus */
+.stop-icon i.fa-bus {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    animation: busGlow 2s ease-in-out infinite alternate;
+}
+
+/* Ícone de localização do usuário */
+.stop-icon i.fa-map-marker-alt {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    animation: locationGlow 2s ease-in-out infinite alternate;
 }
 
 .stop-info {
@@ -600,6 +633,11 @@ body {
     box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
 }
 
+/* Manter o fundo do círculo para ônibus mesmo com ícone */
+.stop.current-bus .stop-icon i.fa-bus {
+    animation: busGlow 2s ease-in-out infinite alternate;
+}
+
 .stop.current-bus .stop-status {
     color: #d97706;
     font-weight: 700;
@@ -661,6 +699,11 @@ body {
     color: white;
     animation: locationGlow 2.5s infinite alternate;
     box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+}
+
+/* Manter o fundo do círculo para localização mesmo com ícone */
+.stop.current-location .stop-icon i.fa-map-marker-alt {
+    animation: locationGlow 2s ease-in-out infinite alternate;
 }
 
 .stop.current-location .stop-status {
