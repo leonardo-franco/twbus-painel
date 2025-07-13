@@ -88,6 +88,56 @@ class BusPanelTester {
                 return false;
             }
         }, 'Verifica acesso ao localStorage');
+
+        // Teste de elementos DOM básicos
+        this.registerTest('DOM Elements', () => {
+            const container = document.querySelector('.container');
+            const expandBtn = document.getElementById('expandBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            return container && expandBtn && refreshBtn;
+        }, 'Verificar se elementos DOM essenciais existem');
+
+        // Teste de estilização dos botões de controle
+        this.registerTest('Control Buttons Style', () => {
+            const expandBtn = document.getElementById('expandBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            if (!expandBtn || !refreshBtn) return false;
+            
+            const expandStyles = window.getComputedStyle(expandBtn);
+            const refreshStyles = window.getComputedStyle(refreshBtn);
+            
+            // Verificar se botões têm background definido
+            const hasBackground = expandStyles.backgroundColor !== 'rgba(0, 0, 0, 0)' && 
+                                refreshStyles.backgroundColor !== 'rgba(0, 0, 0, 0)';
+            
+            // Verificar se botões têm dimensões adequadas
+            const hasSize = parseInt(expandStyles.width) >= 36 && 
+                          parseInt(expandStyles.height) >= 36 &&
+                          parseInt(refreshStyles.width) >= 36 && 
+                          parseInt(refreshStyles.height) >= 36;
+            
+            return hasBackground && hasSize;
+        }, 'Verificar se botões têm estilização adequada');
+
+        // Teste de funcionalidade de expansão
+        this.registerTest('Expand Functionality', () => {
+            const expandBtn = document.getElementById('expandBtn');
+            const container = document.querySelector('.container');
+            
+            if (!expandBtn || !container) return false;
+            
+            // Simular clique
+            expandBtn.click();
+            const isExpanded = container.classList.contains('expanded');
+            
+            // Restaurar estado original se teste passou
+            if (isExpanded) {
+                expandBtn.click();
+            }
+            
+            return isExpanded;
+        }, 'Verificar se funcionalidade de expandir funciona');
     }
 
     // Obter relatório de testes
