@@ -1,13 +1,16 @@
 // TwBus Panel Version Information
 const VERSION = {
-    number: '2.0.1',
-    name: 'Control Buttons Fix',
+    number: '2.1.0',
+    name: 'Project Structure Reorganization',
     date: '2025-07-13',
     features: [
-        'Fixed control buttons styling and positioning',
-        'Improved mobile responsiveness',
-        'Enhanced button visual feedback',
-        'Cleaned up duplicate CSS rules'
+        'Reorganized project structure with folders: assets/, config/, docs/',
+        'Moved configuration files to config/ directory',
+        'Organized icons and static assets in assets/',
+        'Centralized documentation in docs/',
+        'Updated build scripts and paths',
+        'Removed unused PWA files (manifest.json, sw.js)',
+        'Created project.config.js for centralized configuration'
     ]
 };
 

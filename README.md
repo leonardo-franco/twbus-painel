@@ -36,16 +36,28 @@ npm run dev
 ## 📁 Estrutura
 
 ```
-src/
-├── app.js                 # Ponto de entrada principal
-├── core/
-│   ├── BusPanel.js        # Classe principal do painel
-│   └── EventManager.js    # Gerenciamento de eventos
-├── security/
-│   └── SecurityValidator.js # Sistema de segurança
-└── utils/
-    ├── constants.js       # Constantes do sistema
-    └── helpers.js         # Funções utilitárias
+├── assets/                # Recursos estáticos
+│   └── icons/             # Ícones e imagens
+├── config/                # Arquivos de configuração
+│   ├── .eslintrc.js       # Configuração ESLint
+│   ├── .prettierrc.yml    # Configuração Prettier
+│   ├── jest.config.cjs    # Configuração Jest
+│   └── .cspell.json       # Dicionário spell check
+├── docs/                  # Documentação
+├── src/                   # Código fonte
+│   ├── app.js             # Ponto de entrada principal
+│   ├── core/              # Módulos principais
+│   │   ├── BusPanel.js    # Classe principal do painel
+│   │   └── EventManager.js # Gerenciamento de eventos
+│   ├── security/          # Sistema de segurança
+│   │   └── SecurityValidator.js
+│   └── utils/             # Utilitários
+│       ├── constants.js   # Constantes do sistema
+│       └── helpers.js     # Funções auxiliares
+├── tests/                 # Testes automatizados
+├── index.html             # Página principal
+├── style.css              # Estilos CSS
+└── package.json           # Dependências e scripts
 ```
 
 ## 🧪 Testes
