@@ -777,17 +777,73 @@ body {
     }
 }
 
-/* Responsividade */
-@media (max-width: 480px) {
+/* Responsividade Mobile First */
+
+/* Mobile Extra Small (até 320px) */
+@media (max-width: 320px) {
     body {
+        padding: 5px;
+        font-size: 14px;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        border-radius: 10px;
+        min-height: calc(100vh - 10px);
+    }
+    
+    .header {
         padding: 10px;
+    }
+    
+    .bus-number .number {
+        font-size: 24px;
+    }
+    
+    .arrival-time .time {
+        font-size: 18px;
+    }
+    
+    .route-section {
+        padding: 15px 10px;
+    }
+    
+    .stop {
+        padding: 10px;
+        margin: 8px 0;
+    }
+    
+    .stop-name {
+        font-size: 14px;
+    }
+    
+    .stop-status {
+        font-size: 12px;
+    }
+    
+    .control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        /* Melhor área de toque */
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Mobile Small (321px - 480px) */
+@media (min-width: 321px) and (max-width: 480px) {
+    body {
+        padding: 8px;
     }
     
     .container {
         width: 100%;
         max-width: none;
         height: auto;
-        min-height: 100vh;
+        min-height: calc(100vh - 16px);
         border-radius: 15px;
     }
     
@@ -797,13 +853,21 @@ body {
     
     .bus-info {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         text-align: center;
     }
     
     .bus-number, .arrival-time {
         justify-content: center;
         font-size: 20px;
+    }
+    
+    .bus-number .number {
+        font-size: 28px;
+    }
+    
+    .arrival-time .time {
+        font-size: 22px;
     }
     
     .divider {
@@ -815,17 +879,50 @@ body {
     }
     
     .section-header {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         gap: 10px;
-        align-items: flex-start;
     }
     
     .section-header h3 {
         font-size: 16px;
+        flex: 1;
     }
     
     .route-controls {
-        align-self: flex-end;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        /* Área de toque otimizada */
+        min-width: 44px;
+        min-height: 44px;
+        /* Feedback tátil melhorado */
+        transition: all 0.2s ease;
+    }
+    
+    .control-btn:active {
+        transform: scale(0.95);
+        background: rgba(102, 126, 234, 0.2);
+    }
+    
+    .stop {
+        padding: 15px;
+        margin: 10px 0;
+        /* Melhor área de toque para os stops */
+        min-height: 60px;
+        /* Feedback visual no toque */
+        transition: all 0.2s ease;
+    }
+    
+    .stop:active {
+        transform: scale(0.98);
+        background: rgba(102, 126, 234, 0.05);
     }
     
     .info-section {
@@ -847,193 +944,252 @@ body {
     .info-item {
         justify-content: center;
         text-align: center;
+        min-height: 50px;
     }
     
     .additional-info {
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
     }
     
+    /* Modo expandido mobile */
     .container.expanded {
         max-width: none;
-        min-height: 100vh;
+        min-height: calc(100vh - 16px);
     }
     
     .container.expanded .route-container {
-        max-height: 60vh;
+        max-height: 65vh;
+        /* Scroll otimizado para touch */
+        scroll-behavior: smooth;
+        overscroll-behavior: contain;
     }
     
-    .route-controls {
-        align-self: flex-end;
-        margin-top: 10px;
+    /* Animações extras no mobile */
+    .container.expanded .stop.extra {
+        animation-duration: 0.3s;
     }
     
-    .control-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
+    /* Install banner mobile */
+    .install-banner {
+        margin: 5px;
+        border-radius: 10px;
+    }
+    
+    .banner-content {
+        padding: 10px 15px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .banner-actions {
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn-install, .btn-dismiss {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 8px 16px;
     }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-    .container {
-        max-width: 380px;
+/* Melhorias para touch devices */
+@media (pointer: coarse) {
+    /* Todos os elementos interativos têm área mínima de toque */
+    button, .control-btn, .stop, .btn-install, .btn-dismiss {
+        min-width: 44px;
+        min-height: 44px;
+        /* Espaçamento melhor para dedos */
+        margin: 2px;
     }
     
-    .container.expanded {
-        max-width: 480px;
-        min-height: 700px;
+    /* Feedback visual melhorado */
+    button:active, .control-btn:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    
+    /* Scrollbar otimizada para touch */
+    .route-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .route-container::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.6);
+        border-radius: 4px;
+    }
+}
+
+/* Orientação landscape no mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .container {
+        max-width: 90vw;
+        min-height: 100vh;
+        margin: 0 auto;
     }
     
     .header {
-        padding: 18px;
+        padding: 10px 15px;
     }
     
-    .bus-number, .arrival-time {
-        font-size: 22px;
-    }
-    
-    .control-btn {
-        width: 30px;
-        height: 30px;
-    }
-}
-
-@media (min-width: 769px) {
-    .container {
-        max-width: 420px;
-    }
-    
-    .container.expanded {
-        max-width: 550px;
-        min-height: 850px;
-    }
-    
-    .container:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-    
-    .stop:hover {
-        transform: translateX(8px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .stop.highlighted:hover {
-        transform: translateX(8px) scale(1.05);
-    }
-}
-
-/* Estado expandido */
-.container.expanded {
-    max-width: 500px;
-    min-height: 800px;
-    transition: all 0.5s ease;
-}
-
-.container.expanded .route-section {
-    flex: 2;
-    padding: 25px;
-}
-
-.container.expanded .route-container {
-    overflow-y: auto;
-    max-height: 500px;
-    padding-right: 10px;
-}
-
-.container.expanded .route-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.container.expanded .route-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.container.expanded .route-container::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 10px;
-}
-
-.container.expanded .route-container::-webkit-scrollbar-thumb:hover {
-    background: #5a67d8;
-}
-
-/* Melhorias de acessibilidade */
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* Tema escuro */
-@media (prefers-color-scheme: dark) {
-    .container {
-        background: rgba(30, 30, 30, 0.95);
-        color: #e0e0e0;
+    .bus-info {
+        flex-direction: row;
+        justify-content: space-around;
+        text-align: center;
     }
     
     .route-section {
-        background: #1a1a1a;
-        color: #e0e0e0;
+        padding: 15px;
     }
     
-    .stop-name {
-        color: #e0e0e0;
-    }
-    
-    .info-card {
-        background: #2a2a2a;
-        color: #e0e0e0;
+    .container.expanded .route-container {
+        max-height: 50vh;
     }
     
     .info-section {
-        background: #1a1a1a;
+        padding: 10px 15px;
+    }
+    
+    .info-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 10px 15px;
     }
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+/* Melhorias específicas para dispositivos móveis */
+@media (max-width: 768px) {
+    /* Padding safe area para dispositivos com notch */
+    .container {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    /* Melhoria na navegação por toque */
+    .route-container {
+        /* Melhora o scroll momentum */
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+    }
+    
+    /* Indicador visual de scroll */
+    .route-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+        border-radius: 2px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+    
+    .route-container:hover::after,
+    .route-container:focus::after {
+        opacity: 1;
+    }
+    
+    /* Melhorias para o install banner no mobile */
+    .install-banner {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        -webkit-backdrop-filter: blur(15px);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Swipe indicator para elementos expansíveis */
+    .swipe-indicator {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background: rgba(102, 126, 234, 0.4);
+        border-radius: 2px;
+        animation: swipe-hint 2s ease-in-out infinite;
+    }
+    
+    @keyframes swipe-hint {
+        0%, 100% {
+            opacity: 0.4;
+            transform: translateX(-50%) scale(1);
+        }
+        50% {
+            opacity: 0.8;
+            transform: translateX(-50%) scale(1.2);
+        }
+    }
 }
 
-.route-controls {
-    display: flex;
-    gap: 8px;
+/* Classes específicas para dispositivos móveis */
+.mobile-device {
+    /* Otimizações específicas para mobile */
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-.control-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
+.mobile-device .container {
+    /* Melhor rendering em mobile */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-.control-btn:hover {
-    background: rgba(102, 126, 234, 0.2);
-    transform: scale(1.1);
+.mobile-device .interactive-element {
+    /* Feedback visual melhorado */
+    transition: transform 0.1s ease, opacity 0.1s ease;
 }
 
-.control-btn:active {
-    transform: scale(0.95);
+.mobile-device .interactive-element:active {
+    transform: scale(0.98);
+    opacity: 0.8;
 }
 
-.control-btn.refreshing {
-    background: rgba(102, 126, 234, 0.3);
-    color: #4c63d2;
+/* Modo landscape específico */
+.landscape-mode .container {
+    /* Ajustes quando em modo paisagem */
+    max-width: 90vw;
+}
+
+.landscape-mode .header {
+    padding: 8px 15px;
+}
+
+.landscape-mode .bus-info {
+    gap: 20px;
+}
+
+.landscape-mode .route-section {
+    padding: 12px 15px;
+}
+
+.landscape-mode .info-section {
+    padding: 8px 15px;
+}
+
+/* Melhorias para notch e safe areas */
+@supports (padding: max(0px)) {
+    .container {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+    }
+    
+    .mobile-device .container {
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
 }
 
 /* =====================================================

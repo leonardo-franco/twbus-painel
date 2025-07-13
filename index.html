@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
     <meta name="description" content="Painel interativo para informações de parada de ônibus em tempo real">
     <meta name="keywords" content="ônibus, transporte público, parada, tempo real, São Paulo">
     <meta name="author" content="TwBus">
@@ -256,10 +260,8 @@
             if (expandBtn && container && !expandBtn.hasAttribute('data-initialized')) {
                 let isExpanded = false;
                 
-                expandBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Toggle expanded state
+                // Função para toggle
+                function toggleExpand() {
                     isExpanded = !isExpanded;
                     
                     if (isExpanded) {
@@ -294,22 +296,126 @@
                             }, 300);
                         });
                     }
+                }
+                
+                // Event listener para clique/toque
+                expandBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleExpand();
                 });
+                
+                // Suporte a gestos de swipe (mobile)
+                if ('ontouchstart' in window) {
+                    let startY = 0;
+                    let startTime = 0;
+                    
+                    container.addEventListener('touchstart', function(e) {
+                        startY = e.touches[0].clientY;
+                        startTime = Date.now();
+                    }, { passive: true });
+                    
+                    container.addEventListener('touchend', function(e) {
+                        const endY = e.changedTouches[0].clientY;
+                        const endTime = Date.now();
+                        const deltaY = startY - endY;
+                        const deltaTime = endTime - startTime;
+                        
+                        // Detectar swipe up para expandir (mínimo 50px, máximo 500ms)
+                        if (deltaY > 50 && deltaTime < 500 && !isExpanded) {
+                            e.preventDefault();
+                            toggleExpand();
+                        }
+                        // Detectar swipe down para contrair (mínimo 50px, máximo 500ms)
+                        else if (deltaY < -50 && deltaTime < 500 && isExpanded) {
+                            e.preventDefault();
+                            toggleExpand();
+                        }
+                    }, { passive: false });
+                }
+                
+                // Adicionar classes para elementos interativos
+                expandBtn.classList.add('interactive-element');
                 
                 expandBtn.setAttribute('data-initialized', 'true');
                 console.log('✅ Funcionalidade de expandir inicializada');
             }
         }
         
-        // Inicializar quando DOM estiver pronto
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initExpandFunctionality);
-        } else {
-            initExpandFunctionality();
+        // Função para otimizar performance em mobile
+        function initMobileOptimizations() {
+            // Detectar se é mobile
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                           window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Adicionar classe mobile ao body
+                document.body.classList.add('mobile-device');
+                
+                // Otimizar scroll performance
+                const scrollableElements = document.querySelectorAll('.route-container');
+                scrollableElements.forEach(element => {
+                    element.style.willChange = 'scroll-position';
+                });
+                
+                // Adicionar indicadores visuais para elementos interativos
+                const interactiveElements = document.querySelectorAll('.control-btn, .stop');
+                interactiveElements.forEach(element => {
+                    element.classList.add('interactive-element');
+                });
+                
+                // Melhorar feedback tátil (se suportado)
+                if ('vibrate' in navigator) {
+                    expandBtn.addEventListener('click', () => {
+                        navigator.vibrate(50); // Vibração sutil
+                    });
+                }
+                
+                console.log('✅ Otimizações mobile ativadas');
+            }
         }
         
+        // Função para ajustar layout baseado na orientação
+        function handleOrientationChange() {
+            const container = document.querySelector('.container');
+            if (container) {
+                // Pequeno delay para aguardar mudança de orientação
+                setTimeout(() => {
+                    // Recalcular dimensões
+                    const isLandscape = window.innerWidth > window.innerHeight;
+                    container.classList.toggle('landscape-mode', isLandscape);
+                    
+                    // Ajustar altura máxima do route-container
+                    const routeContainer = document.querySelector('.route-container');
+                    if (routeContainer && window.innerWidth <= 768) {
+                        const maxHeight = isLandscape ? '50vh' : '65vh';
+                        routeContainer.style.maxHeight = maxHeight;
+                    }
+                }, 100);
+            }
+        }
+        
+        // Inicializar quando DOM estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initExpandFunctionality();
+                initMobileOptimizations();
+                handleOrientationChange();
+            });
+        } else {
+            initExpandFunctionality();
+            initMobileOptimizations();
+            handleOrientationChange();
+        }
+        
+        // Listener para mudanças de orientação
+        window.addEventListener('orientationchange', handleOrientationChange);
+        window.addEventListener('resize', handleOrientationChange);
+        
         // Backup: tentar novamente após 1 segundo
-        setTimeout(initExpandFunctionality, 1000);
+        setTimeout(() => {
+            initExpandFunctionality();
+            initMobileOptimizations();
+        }, 1000);
     </script>
 </body>
 </html>
