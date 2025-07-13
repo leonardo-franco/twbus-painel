@@ -3,7 +3,7 @@
  * Gerencia a interface e funcionalidades do sistema
  */
 
-import { SYSTEM_CONFIG, DOM_ATTRIBUTES, CSS_CLASSES } from '../utils/constants.js';
+import { SYSTEM_CONFIG, DOM_ATTRIBUTES } from '../utils/constants.js';
 import { DOMUtils, TimeUtils, AnimationUtils, LogUtils } from '../utils/helpers.js';
 import { securityValidator, SecurityError } from '../security/SecurityValidator.js';
 import { eventManager, domEventManager } from './EventManager.js';
@@ -197,7 +197,7 @@ export class BusPanel {
             // Configurar paradas principais
             const currentBusStop = this.elements.get('currentBusStop');
             if (currentBusStop) {
-                currentBusStop.classList.add(CSS_CLASSES.HIGHLIGHTED);
+                currentBusStop.classList.add(SYSTEM_CONFIG.CSS_CLASSES.HIGHLIGHTED);
                 DOMUtils.setAttributes(currentBusStop, {
                     [DOM_ATTRIBUTES.ARIA_LABEL]: 'Localização atual do ônibus'
                 });
@@ -205,7 +205,7 @@ export class BusPanel {
             
             const currentLocation = this.elements.get('currentLocation');
             if (currentLocation) {
-                currentLocation.classList.add(CSS_CLASSES.HIGHLIGHTED);
+                currentLocation.classList.add(SYSTEM_CONFIG.CSS_CLASSES.HIGHLIGHTED);
                 DOMUtils.setAttributes(currentLocation, {
                     [DOM_ATTRIBUTES.ARIA_LABEL]: 'Sua localização atual'
                 });
@@ -213,7 +213,7 @@ export class BusPanel {
             
             const nextStop = this.elements.get('nextStop');
             if (nextStop) {
-                nextStop.classList.add(CSS_CLASSES.HIGHLIGHTED);
+                nextStop.classList.add(SYSTEM_CONFIG.CSS_CLASSES.HIGHLIGHTED);
                 DOMUtils.setAttributes(nextStop, {
                     [DOM_ATTRIBUTES.ARIA_LABEL]: 'Próxima parada do ônibus'
                 });
@@ -374,7 +374,7 @@ export class BusPanel {
             const refreshBtn = this.elements.get('refreshBtn');
             if (!refreshBtn) return;
 
-            refreshBtn.classList.add(CSS_CLASSES.REFRESHING);
+            refreshBtn.classList.add(SYSTEM_CONFIG.CSS_CLASSES.REFRESHING);
             DOMUtils.setAttributes(refreshBtn, {
                 [DOM_ATTRIBUTES.ARIA_LABEL]: 'Atualizando informações...'
             });
@@ -382,7 +382,7 @@ export class BusPanel {
             // Simular operação de refresh
             await TimeUtils.delay(SYSTEM_CONFIG.UI.REFRESH_ANIMATION_DURATION);
             
-            refreshBtn.classList.remove(CSS_CLASSES.REFRESHING);
+            refreshBtn.classList.remove(SYSTEM_CONFIG.CSS_CLASSES.REFRESHING);
             DOMUtils.setAttributes(refreshBtn, {
                 [DOM_ATTRIBUTES.ARIA_LABEL]: 'Atualizar informações'
             });
@@ -452,7 +452,7 @@ export class BusPanel {
      */
     async expandPanel(container, expandBtn) {
         try {
-            container.classList.add(CSS_CLASSES.EXPANDED);
+            container.classList.add(SYSTEM_CONFIG.CSS_CLASSES.EXPANDED);
             expandBtn.innerHTML = '<i class="fas fa-compress" aria-hidden="true"></i>';
             DOMUtils.setAttributes(expandBtn, {
                 [DOM_ATTRIBUTES.ARIA_LABEL]: 'Contrair painel'
@@ -471,7 +471,7 @@ export class BusPanel {
      */
     async collapsePanel(container, expandBtn) {
         try {
-            container.classList.remove(CSS_CLASSES.EXPANDED);
+            container.classList.remove(SYSTEM_CONFIG.CSS_CLASSES.EXPANDED);
             expandBtn.innerHTML = '<i class="fas fa-expand" aria-hidden="true"></i>';
             DOMUtils.setAttributes(expandBtn, {
                 [DOM_ATTRIBUTES.ARIA_LABEL]: 'Expandir painel'
@@ -582,7 +582,7 @@ export class BusPanel {
         try {
             if (error instanceof SecurityError) {
                 LogUtils.error(SYSTEM_CONFIG.MESSAGES.SECURITY_ERROR_PREFIX, error.message);
-                document.body.classList.add(CSS_CLASSES.SECURITY_ERROR);
+                document.body.classList.add(SYSTEM_CONFIG.CSS_CLASSES.SECURITY_ERROR);
                 
                 // Criar indicador de segurança
                 const indicator = DOMUtils.createElement('div', {
@@ -595,7 +595,7 @@ export class BusPanel {
                 }
             } else {
                 LogUtils.error('Erro no painel:', error);
-                document.body.classList.add(CSS_CLASSES.ERROR_STATE);
+                document.body.classList.add(SYSTEM_CONFIG.CSS_CLASSES.ERROR_STATE);
             }
             
             // Emitir evento de erro
