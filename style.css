@@ -567,6 +567,50 @@ body {
     transition: all 0.4s ease;
 }
 
+/* Mostrar elementos extras quando expandido */
+.container.expanded .stop.extra {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Garantir que elementos extras não fiquem ocultos quando expandido */
+.container.expanded .stop.extra:not(.hidden) {
+    display: flex;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Animação de entrada para elementos extras */
+.container.expanded .stop.extra:nth-child(odd) {
+    animation: slideInLeft 0.4s ease forwards;
+}
+
+.container.expanded .stop.extra:nth-child(even) {
+    animation: slideInRight 0.4s ease forwards;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 /* Seção de informações */
 .info-section {
     padding: 20px;

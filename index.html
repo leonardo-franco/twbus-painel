@@ -269,8 +269,14 @@
                         
                         // Show extra stops
                         const extraStops = document.querySelectorAll('.stop.extra');
-                        extraStops.forEach(stop => {
+                        extraStops.forEach((stop, index) => {
                             stop.classList.remove('hidden');
+                            // Adicionar delay progressivo para animação
+                            setTimeout(() => {
+                                stop.style.display = 'flex';
+                                stop.style.opacity = '1';
+                                stop.style.transform = 'translateX(0)';
+                            }, index * 100);
                         });
                     } else {
                         container.classList.remove('expanded');
@@ -280,7 +286,12 @@
                         // Hide extra stops
                         const extraStops = document.querySelectorAll('.stop.extra');
                         extraStops.forEach(stop => {
-                            stop.classList.add('hidden');
+                            stop.style.opacity = '0';
+                            stop.style.transform = 'translateX(-20px)';
+                            setTimeout(() => {
+                                stop.classList.add('hidden');
+                                stop.style.display = 'none';
+                            }, 300);
                         });
                     }
                 });
