@@ -1,0 +1,40 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="64" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Bus Icon -->
+  <g transform="translate(128, 128)">
+    <!-- Bus Body -->
+    <rect x="32" y="64" width="192" height="128" rx="16" fill="white" stroke="none"/>
+    
+    <!-- Windows -->
+    <rect x="48" y="80" width="36" height="32" rx="4" fill="#667eea"/>
+    <rect x="96" y="80" width="36" height="32" rx="4" fill="#667eea"/>
+    <rect x="144" y="80" width="36" height="32" rx="4" fill="#667eea"/>
+    
+    <!-- Door -->
+    <rect x="192" y="112" width="20" height="64" rx="2" fill="#764ba2"/>
+    
+    <!-- Wheels -->
+    <circle cx="64" cy="208" r="16" fill="#333"/>
+    <circle cx="64" cy="208" r="8" fill="#666"/>
+    <circle cx="192" cy="208" r="16" fill="#333"/>
+    <circle cx="192" cy="208" r="8" fill="#666"/>
+    
+    <!-- Route Line -->
+    <line x1="32" y1="240" x2="224" y2="240" stroke="white" stroke-width="4" stroke-dasharray="8,4"/>
+    
+    <!-- Stop Indicators -->
+    <circle cx="48" cy="240" r="6" fill="white"/>
+    <circle cx="128" cy="240" r="6" fill="#ffd700"/>
+    <circle cx="208" cy="240" r="6" fill="white"/>
+    
+    <!-- Text -->
+    <text x="128" y="32" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">TwBus</text>
+  </g>
+</svg>

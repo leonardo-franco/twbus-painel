@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Painel interativo para informações de parada de ônibus em tempo real">
+    <meta name="keywords" content="ônibus, transporte público, parada, tempo real, São Paulo">
+    <meta name="author" content="TwBus">
+    
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://twbus.vercel.app; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none'; child-src 'none';">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
+    <link rel="icon" type="image/png" href="assets/icons/icon-512.svg">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Security Configuration -->
+    <script src="security-config.js"></script>
+    
+    <title>TwBus - Painel de Parada</title>
+</head>
+<body>
+    <!-- Indicadores de sistema -->
+    <div id="system-indicators" class="system-indicators"></div>
+    
+    <!-- Banner de instalação PWA -->
+    <div id="installBanner" class="install-banner">
+        <div class="banner-content">
+            <div class="banner-text">
+                <strong>📱 Instalar TwBus</strong>
+                <span>Acesse offline e receba notificações</span>
+            </div>
+            <div class="banner-actions">
+                <button id="installBannerBtn" class="btn-install">Instalar</button>
+                <button id="dismissBannerBtn" class="btn-dismiss">✕</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Cabeçalho com número e tempo -->
+        <div class="header">
+            <div class="bus-info">
+                <div class="bus-number">
+                    <i class="fas fa-bus"></i>
+                    <span class="number">174</span>
+                </div>
+                <div class="divider"></div>
+                <div class="arrival-time">
+                    <i class="fas fa-clock"></i>
+                    <span class="time">5 min</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção da rota -->
+        <div class="route-section">
+            <div class="section-header">
+                <h3><i class="fas fa-route"></i> Rota do Ônibus</h3>
+                <div class="route-controls">
+                    <button class="control-btn" id="refreshBtn" title="Atualizar informações" aria-label="Atualizar informações">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="control-btn" id="expandBtn" title="Expandir/Recolher rota" aria-label="Expandir ou recolher rota">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="route-container">
+                <div class="route-line">
+                    <!-- Paradas anteriores (visíveis apenas no modo expandido) -->
+                    <div class="stop passed extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Terminal Barra Funda</span>
+                            <span class="stop-status">Passou</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop passed extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Memorial da América Latina</span>
+                            <span class="stop-status">Passou</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop passed extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Estação Marechal Deodoro</span>
+                            <span class="stop-status">Passou</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Paradas principais (sempre visíveis) -->
+                    <div class="stop passed">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Praça da Sé</span>
+                            <span class="stop-status">Passou</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop current-bus highlighted">
+                        <div class="stop-icon">
+                            <i class="fas fa-bus"></i>
+                        </div>
+                        <div class="stop-info">
+                            <span class="stop-name">Rua Júlio Mesquita</span>
+                            <span class="stop-status">Ônibus aqui</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop next">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Av. São João</span>
+                            <span class="stop-status">Próxima</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop current-location highlighted">
+                        <div class="stop-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="stop-info">
+                            <span class="stop-name">Ópera</span>
+                            <span class="stop-status">Você está aqui</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop upcoming">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Estação da Luz</span>
+                            <span class="stop-status">Após você</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop upcoming">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Pinacoteca</span>
+                            <span class="stop-status">Após você</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop upcoming">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Jardim da Luz</span>
+                            <span class="stop-status">Após você</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Paradas posteriores (visíveis apenas no modo expandido) -->
+                    <div class="stop upcoming extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Estação Tiradentes</span>
+                            <span class="stop-status">Após você</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop upcoming extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Mercado Municipal</span>
+                            <span class="stop-status">Após você</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop upcoming extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Rua 25 de Março</span>
+                            <span class="stop-status">Após você</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stop upcoming extra hidden">
+                        <div class="stop-icon"></div>
+                        <div class="stop-info">
+                            <span class="stop-name">Terminal Parque Dom Pedro</span>
+                            <span class="stop-status">Final</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de informações adicionais -->
+        <div class="info-section">
+            <div class="info-card">
+                <div class="info-item">
+                    <i class="fas fa-users"></i>
+                    <div class="info-content">
+                        <span class="info-label">Lugares livres</span>
+                        <span class="info-value available">12</span>
+                    </div>
+                </div>
+                <div class="info-divider"></div>
+                <div class="info-item">
+                    <i class="fas fa-bus"></i>
+                    <div class="info-content">
+                        <span class="info-label">Próximo ônibus</span>
+                        <span class="info-value next-bus">15 min</span>
+                    </div>
+                </div>
+            </div>
+            <div class="additional-info">
+                <div class="info-badge">
+                    <i class="fas fa-wifi"></i>
+                    <span>Wi-Fi disponível</span>
+                </div>
+                <div class="info-badge">
+                    <i class="fas fa-wheelchair"></i>
+                    <span>Acessível</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="footer">
+            <div class="update-time">
+                <i class="fas fa-sync-alt"></i>
+                <span>Atualizado: 14:32</span>
+            </div>
+            <div class="admin-access admin-relative">
+                <button id="adminBtn" class="admin-btn" title="Acesso Administrativo">
+                    ⚙️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts modernos com módulos ES6 -->
+    <script type="module" src="src/app.js"></script>
+    <script src="tests/tests.js"></script>
+    
+    <!-- Fallback para navegadores sem suporte a módulos -->
+    <script nomodule src="script.js"></script>
+    
+    <!-- Script de emergência para funcionalidade de expandir -->
+    <script>
+        // Garantir que a funcionalidade de expandir funcione independentemente
+        function initExpandFunctionality() {
+            const expandBtn = document.getElementById('expandBtn');
+            const container = document.querySelector('.container');
+            
+            if (expandBtn && container && !expandBtn.hasAttribute('data-initialized')) {
+                let isExpanded = false;
+                
+                // Função para toggle
+                function toggleExpand() {
+                    isExpanded = !isExpanded;
+                    
+                    if (isExpanded) {
+                        container.classList.add('expanded');
+                        expandBtn.innerHTML = '<i class="fas fa-compress" aria-hidden="true"></i>';
+                        expandBtn.setAttribute('aria-label', 'Contrair painel');
+                        
+                        // Show extra stops
+                        const extraStops = document.querySelectorAll('.stop.extra');
+                        extraStops.forEach((stop, index) => {
+                            stop.classList.remove('hidden');
+                            // Adicionar delay progressivo para animação
+                            setTimeout(() => {
+                                stop.style.display = 'flex';
+                                stop.style.opacity = '1';
+                                stop.style.transform = 'translateX(0)';
+                            }, index * 100);
+                        });
+                    } else {
+                        container.classList.remove('expanded');
+                        expandBtn.innerHTML = '<i class="fas fa-expand" aria-hidden="true"></i>';
+                        expandBtn.setAttribute('aria-label', 'Expandir painel');
+                        
+                        // Hide extra stops
+                        const extraStops = document.querySelectorAll('.stop.extra');
+                        extraStops.forEach(stop => {
+                            stop.style.opacity = '0';
+                            stop.style.transform = 'translateX(-20px)';
+                            setTimeout(() => {
+                                stop.classList.add('hidden');
+                                stop.style.display = 'none';
+                            }, 300);
+                        });
+                    }
+                }
+                
+                // Event listener para clique/toque
+                expandBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleExpand();
+                });
+                
+                // Suporte básico a gestos de swipe em mobile
+                if ('ontouchstart' in window && window.innerWidth <= 768) {
+                    let startY = 0;
+                    
+                    container.addEventListener('touchstart', function(e) {
+                        startY = e.touches[0].clientY;
+                    }, { passive: true });
+                    
+                    container.addEventListener('touchend', function(e) {
+                        const endY = e.changedTouches[0].clientY;
+                        const deltaY = startY - endY;
+                        
+                        // Swipe up para expandir ou down para contrair
+                        if (Math.abs(deltaY) > 50) {
+                            if (deltaY > 0 && !isExpanded) {
+                                toggleExpand();
+                            } else if (deltaY < 0 && isExpanded) {
+                                toggleExpand();
+                            }
+                        }
+                    });
+                }
+                
+                expandBtn.setAttribute('data-initialized', 'true');
+                console.log('✅ Funcionalidade de expandir inicializada');
+            }
+        }
+        
+        // Inicializar quando DOM estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initExpandFunctionality);
+        } else {
+            initExpandFunctionality();
+        }
+        
+        // Backup: tentar novamente após 1 segundo
+        setTimeout(initExpandFunctionality, 1000);
+    </script>
+</body>
+</html>
