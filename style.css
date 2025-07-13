@@ -556,6 +556,10 @@ body {
     left: -6px;
     border: 3px solid white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", FontAwesome, sans-serif;
+    font-weight: 900;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Ícone do ônibus */
@@ -563,6 +567,14 @@ body {
     background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
     color: white;
     animation: busGlow 2s ease-in-out infinite alternate;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Fallback se o ícone não carregar */
+.stop-icon i.fa-bus:empty::before {
+    content: "🚌";
+    font-family: "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 14px;
 }
 
 /* Ícone de localização do usuário */
@@ -570,6 +582,14 @@ body {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     color: white;
     animation: locationGlow 2s ease-in-out infinite alternate;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Fallback se o ícone não carregar */
+.stop-icon i.fa-map-marker-alt:empty::before {
+    content: "📍";
+    font-family: "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 14px;
 }
 
 .stop-info {
