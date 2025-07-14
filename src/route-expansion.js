@@ -39,6 +39,12 @@ class RouteExpansionManager {
         this.container = document.querySelector('.container');
         this.extraStops = document.querySelectorAll('.stop.extra');
         
+        console.log('🔍 Finding elements:', {
+            expandBtn: !!this.expandBtn,
+            container: !!this.container,
+            extraStopsCount: this.extraStops.length
+        });
+        
         if (!this.expandBtn || !this.container) {
             console.error('❌ Route expansion elements not found');
             return false;
@@ -201,7 +207,10 @@ class RouteExpansionManager {
             return;
         }
         
-        console.log('🔄 Toggle expansion - Current state:', this.isExpanded);
+        // Refresh dos elementos DOM antes de cada toggle
+        this.extraStops = document.querySelectorAll('.stop.extra');
+        
+        console.log('🔄 Toggle expansion - Current state:', this.isExpanded, 'Container has expanded class:', this.container.classList.contains('expanded'));
         this.isAnimating = true;
         
         // Desabilita o botão temporariamente para evitar cliques múltiplos
@@ -219,6 +228,14 @@ class RouteExpansionManager {
                 this.isExpanded = true;
                 console.log('✅ Route expanded, new state:', this.isExpanded);
             }
+            
+            // Verificação adicional do estado final
+            console.log('🔍 Final state check:', {
+                isExpanded: this.isExpanded,
+                containerHasClass: this.container.classList.contains('expanded'),
+                visibleStops: Array.from(this.extraStops).filter(stop => stop.style.display !== 'none').length
+            });
+            
         } catch (error) {
             console.error('❌ Animation error:', error);
         } finally {
@@ -253,13 +270,16 @@ class RouteExpansionManager {
             
             this.extraStops.forEach((stop, index) => {
                 setTimeout(() => {
+                    // Prepara estado inicial para animação
                     stop.classList.remove('hidden');
                     stop.style.display = 'flex';
+                    stop.style.opacity = '0';
+                    stop.style.transform = 'translateX(-20px)';
                     
                     // Força reflow para garantir que o display seja aplicado
                     stop.offsetHeight;
                     
-                    // Aplica animação
+                    // Aplica animação de entrada
                     requestAnimationFrame(() => {
                         stop.style.opacity = '1';
                         stop.style.transform = 'translateX(0)';
