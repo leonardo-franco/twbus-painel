@@ -4,7 +4,7 @@ module.exports = {
   rootDir: '../',
   setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
   testMatch: [
-    '<rootDir>/tests/basic.test.js'
+    '<rootDir>/tests/*.test.js'
   ],
   collectCoverageFrom: [
     '<rootDir>/src/**/*.js',

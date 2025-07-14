@@ -251,11 +251,11 @@ class RouteExpansionManager {
     async expandRoute() {
         console.log('🔍 Expanding route - extraStops count:', this.extraStops.length);
         
-        // Atualiza o botão ANTES da animação
-        this.updateExpandButton(true);
-        
-        // Adiciona classe ao container
+        // Adiciona classe ao container PRIMEIRO
         this.container.classList.add('expanded');
+        
+        // Atualiza o botão
+        this.updateExpandButton(true);
         
         // Mostra paradas extras com animação escalonada
         return new Promise((resolve) => {
@@ -276,7 +276,7 @@ class RouteExpansionManager {
                     stop.style.opacity = '0';
                     stop.style.transform = 'translateX(-20px)';
                     
-                    // Força reflow para garantir que o display seja aplicado
+                    // Força reflow
                     stop.offsetHeight;
                     
                     // Aplica animação de entrada
@@ -285,7 +285,7 @@ class RouteExpansionManager {
                         stop.style.transform = 'translateX(0)';
                     });
                     
-                    // Verifica se todas as animações terminaram
+                    // Conta animações completadas
                     setTimeout(() => {
                         completedAnimations++;
                         if (completedAnimations === totalStops) {
@@ -305,40 +305,22 @@ class RouteExpansionManager {
     async contractRoute() {
         console.log('🔍 Contracting route - extraStops count:', this.extraStops.length);
         
-        // Atualiza o botão ANTES da animação
-        this.updateExpandButton(false);
-        
-        // Remove classe do container
+        // Remove classe do container PRIMEIRO
         this.container.classList.remove('expanded');
         
-        // Esconde paradas extras com animação
-        return new Promise((resolve) => {
-            let completedAnimations = 0;
-            const totalStops = this.extraStops.length;
-            
-            if (totalStops === 0) {
-                console.log('⚠️ No extra stops found');
-                resolve();
-                return;
-            }
-            
-            this.extraStops.forEach((stop, index) => {
-                // Aplica animação de saída
-                stop.style.opacity = '0';
-                stop.style.transform = 'translateX(-20px)';
-                
-                setTimeout(() => {
-                    stop.classList.add('hidden');
-                    stop.style.display = 'none';
-                    
-                    completedAnimations++;
-                    if (completedAnimations === totalStops) {
-                        console.log('✅ All contract animations completed');
-                        resolve();
-                    }
-                }, this.animationDuration);
-            });
+        // Atualiza o botão 
+        this.updateExpandButton(false);
+        
+        // Esconde paradas extras IMEDIATAMENTE sem animação complexa
+        this.extraStops.forEach(stop => {
+            stop.classList.add('hidden');
+            stop.style.display = 'none';
+            stop.style.opacity = '0';
+            stop.style.transform = 'translateX(-20px)';
         });
+        
+        console.log('✅ Route contracted immediately');
+        return Promise.resolve();
     }
 
     /**
