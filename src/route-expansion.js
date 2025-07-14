@@ -115,6 +115,7 @@ class RouteExpansionManager {
         
         if (this.isAnimating) return;
         
+        console.log('🔄 Toggle expansion - Current state:', this.isExpanded);
         this.toggleExpansion();
     }
 
@@ -181,13 +182,14 @@ class RouteExpansionManager {
         if (this.isAnimating) return;
         
         this.isAnimating = true;
-        this.isExpanded = !this.isExpanded;
         
         try {
             if (this.isExpanded) {
-                await this.expandRoute();
-            } else {
                 await this.contractRoute();
+                this.isExpanded = false;
+            } else {
+                await this.expandRoute();
+                this.isExpanded = true;
             }
         } catch (error) {
             console.error('❌ Animation error:', error);
@@ -288,6 +290,13 @@ class RouteExpansionManager {
     updateExpandButton(isExpanded) {
         const iconClass = isExpanded ? 'fas fa-compress' : 'fas fa-expand';
         this.expandBtn.innerHTML = `<i class="${iconClass}" aria-hidden="true"></i>`;
+        
+        // Atualiza classe CSS no botão
+        if (isExpanded) {
+            this.expandBtn.classList.add('expanded');
+        } else {
+            this.expandBtn.classList.remove('expanded');
+        }
     }
 
     /**
@@ -327,7 +336,6 @@ class RouteExpansionManager {
         this.isAnimating = false;
         this.findElements();
         this.setupEventListeners();
-        this.updateAriaLabels();
         
         // Reset visual state
         this.container?.classList.remove('expanded');
@@ -339,6 +347,9 @@ class RouteExpansionManager {
         });
         
         this.updateExpandButton(false);
+        this.updateAriaLabels();
+        
+        console.log('🔄 Route expansion manager reinitialized');
     }
 
     /**
