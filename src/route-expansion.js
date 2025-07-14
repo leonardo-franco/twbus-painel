@@ -179,17 +179,25 @@ class RouteExpansionManager {
      * Alterna entre expandido e contraído
      */
     async toggleExpansion() {
-        if (this.isAnimating) return;
+        if (this.isAnimating) {
+            console.log('⏸️ Animation already in progress, skipping...');
+            return;
+        }
         
+        console.log('🔄 Toggle expansion - Current state:', this.isExpanded);
         this.isAnimating = true;
         
         try {
             if (this.isExpanded) {
+                console.log('📥 Contracting route...');
                 await this.contractRoute();
                 this.isExpanded = false;
+                console.log('✅ Route contracted, new state:', this.isExpanded);
             } else {
+                console.log('📤 Expanding route...');
                 await this.expandRoute();
                 this.isExpanded = true;
+                console.log('✅ Route expanded, new state:', this.isExpanded);
             }
         } catch (error) {
             console.error('❌ Animation error:', error);
@@ -203,7 +211,9 @@ class RouteExpansionManager {
      * Expande a rota
      */
     async expandRoute() {
-        // Atualiza o botão
+        console.log('🔍 Expanding route - extraStops count:', this.extraStops.length);
+        
+        // Atualiza o botão ANTES da animação
         this.updateExpandButton(true);
         
         // Adiciona classe ao container
@@ -215,6 +225,7 @@ class RouteExpansionManager {
             const totalStops = this.extraStops.length;
             
             if (totalStops === 0) {
+                console.log('⚠️ No extra stops found');
                 resolve();
                 return;
             }
@@ -237,6 +248,7 @@ class RouteExpansionManager {
                     setTimeout(() => {
                         completedAnimations++;
                         if (completedAnimations === totalStops) {
+                            console.log('✅ All expand animations completed');
                             resolve();
                         }
                     }, this.animationDuration);
@@ -250,7 +262,9 @@ class RouteExpansionManager {
      * Contrai a rota
      */
     async contractRoute() {
-        // Atualiza o botão
+        console.log('🔍 Contracting route - extraStops count:', this.extraStops.length);
+        
+        // Atualiza o botão ANTES da animação
         this.updateExpandButton(false);
         
         // Remove classe do container
@@ -262,6 +276,7 @@ class RouteExpansionManager {
             const totalStops = this.extraStops.length;
             
             if (totalStops === 0) {
+                console.log('⚠️ No extra stops found');
                 resolve();
                 return;
             }
@@ -277,6 +292,7 @@ class RouteExpansionManager {
                     
                     completedAnimations++;
                     if (completedAnimations === totalStops) {
+                        console.log('✅ All contract animations completed');
                         resolve();
                     }
                 }, this.animationDuration);
@@ -289,6 +305,8 @@ class RouteExpansionManager {
      */
     updateExpandButton(isExpanded) {
         const iconClass = isExpanded ? 'fas fa-compress' : 'fas fa-expand';
+        console.log('🔄 Updating button icon:', iconClass, 'for expanded state:', isExpanded);
+        
         this.expandBtn.innerHTML = `<i class="${iconClass}" aria-hidden="true"></i>`;
         
         // Atualiza classe CSS no botão
