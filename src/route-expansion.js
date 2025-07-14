@@ -14,6 +14,7 @@ class RouteExpansionManager {
         this.touchThreshold = 50;
         this.animationDuration = 300;
         this.staggerDelay = 50;
+        this.lastClickTime = 0;
         
         this.init();
     }
@@ -52,12 +53,17 @@ class RouteExpansionManager {
     setupEventListeners() {
         if (!this.expandBtn) return;
 
-        // Previne múltiplos event listeners
-        this.expandBtn.removeEventListener('click', this.handleClick);
-        this.expandBtn.addEventListener('click', this.handleClick.bind(this));
-
-        // Suporte a teclado
-        this.expandBtn.addEventListener('keydown', this.handleKeydown.bind(this));
+        // Remove listeners existentes para evitar duplicatas
+        this.expandBtn.removeEventListener('click', this.boundHandleClick);
+        this.expandBtn.removeEventListener('keydown', this.boundHandleKeydown);
+        
+        // Cria funções bound para poder removê-las depois
+        this.boundHandleClick = this.handleClick.bind(this);
+        this.boundHandleKeydown = this.handleKeydown.bind(this);
+        
+        // Adiciona novos listeners
+        this.expandBtn.addEventListener('click', this.boundHandleClick);
+        this.expandBtn.addEventListener('keydown', this.boundHandleKeydown);
 
         // Suporte a touch em dispositivos móveis
         if ('ontouchstart' in window) {
@@ -113,8 +119,19 @@ class RouteExpansionManager {
         event.preventDefault();
         event.stopPropagation();
         
-        if (this.isAnimating) return;
+        // Previne múltiplos cliques simultâneos
+        if (this.isAnimating) {
+            console.log('⏸️ Click blocked - animation in progress');
+            return;
+        }
         
+        // Adiciona um pequeno delay para prevenir double-clicks
+        if (this.lastClickTime && Date.now() - this.lastClickTime < 100) {
+            console.log('⏸️ Click blocked - too fast');
+            return;
+        }
+        
+        this.lastClickTime = Date.now();
         console.log('🔄 Toggle expansion - Current state:', this.isExpanded);
         this.toggleExpansion();
     }
@@ -187,6 +204,9 @@ class RouteExpansionManager {
         console.log('🔄 Toggle expansion - Current state:', this.isExpanded);
         this.isAnimating = true;
         
+        // Desabilita o botão temporariamente para evitar cliques múltiplos
+        this.expandBtn.style.pointerEvents = 'none';
+        
         try {
             if (this.isExpanded) {
                 console.log('📥 Contracting route...');
@@ -203,6 +223,7 @@ class RouteExpansionManager {
             console.error('❌ Animation error:', error);
         } finally {
             this.isAnimating = false;
+            this.expandBtn.style.pointerEvents = 'auto';
             this.updateAriaLabels();
         }
     }
@@ -374,13 +395,18 @@ class RouteExpansionManager {
      * Destrói o gerenciador
      */
     destroy() {
-        this.expandBtn?.removeEventListener('click', this.handleClick);
-        this.expandBtn?.removeEventListener('keydown', this.handleKeydown);
+        if (this.expandBtn) {
+            this.expandBtn.removeEventListener('click', this.boundHandleClick);
+            this.expandBtn.removeEventListener('keydown', this.boundHandleKeydown);
+        }
+        
         window.removeEventListener('orientationchange', this.handleOrientationChange);
         
         this.expandBtn = null;
         this.container = null;
         this.extraStops = [];
+        this.boundHandleClick = null;
+        this.boundHandleKeydown = null;
     }
 }
 
